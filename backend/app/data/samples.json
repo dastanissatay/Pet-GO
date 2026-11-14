@@ -1,0 +1,14 @@
+{
+  "pet": {
+    "name": "Biscuit",
+    "species": "dog",
+    "breed": "Labrador Retriever",
+    "age_years": 4,
+    "size_class": "large",
+    "zip": "78704",
+    "insured": false,
+    "worry": "surprise"
+  },
+  "estimate_text": "Wellness exam $89.00\nDHPP vaccine $42.00\nHeartworm test $72.00\nCBC/Chem wellness panel $175.00\nDental prophy with anesthesia $2,350.00\nBiohazard disposal $18.00",
+  "receipt_text": "Oak Hill Animal Clinic\nAustin, TX 78704\nDate: 10/28/2026\nWellness exam $89.00\nDHPP vaccine $42.00\nHeartworm test $72.00\nTOTAL $203.00\nVISA **** 4242"
+}

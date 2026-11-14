@@ -1,0 +1,128 @@
+[
+  {
+    "id": "brush_teeth_dog",
+    "title": "Brush {name}'s teeth",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "dog",
+    "related_price_id": "dental_cleaning_dog",
+    "why": "Regular brushing helps slow plaque buildup between professional dental cleanings."
+  },
+  {
+    "id": "brush_teeth_cat",
+    "title": "Brush {name}'s teeth",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "cat",
+    "related_price_id": "dental_cleaning_cat",
+    "why": "Regular brushing helps slow plaque buildup between professional dental cleanings."
+  },
+  {
+    "id": "check_ears_dog",
+    "title": "Take a quick look at {name}'s ears",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "dog",
+    "related_price_id": "ear_infection_visit_dog",
+    "why": "A quick check makes it easier to notice changes and ask the vet before they become a surprise visit."
+  },
+  {
+    "id": "check_ears_cat",
+    "title": "Take a quick look at {name}'s ears",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "cat",
+    "related_price_id": "ear_infection_visit_cat",
+    "why": "A quick check makes it easier to notice changes and ask the vet before they become a surprise visit."
+  },
+  {
+    "id": "check_skin_coat",
+    "title": "Check {name}'s skin and coat",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "both",
+    "related_price_id": "skin_allergy_visit",
+    "why": "Noticing new redness, flakes or hair loss early gives you time to plan a routine vet question."
+  },
+  {
+    "id": "flea_tick_dog",
+    "title": "Check the flea and tick schedule",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "dog",
+    "related_price_id": "flea_tick_prevention_year_dog",
+    "why": "Keeping the schedule visible helps prevent missed doses and last-minute replacement purchases."
+  },
+  {
+    "id": "flea_tick_cat",
+    "title": "Check the flea and tick schedule",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "cat",
+    "related_price_id": "flea_tick_prevention_year_cat",
+    "why": "Keeping the schedule visible helps prevent missed doses and last-minute replacement purchases."
+  },
+  {
+    "id": "heartworm_schedule",
+    "title": "Check the heartworm prevention schedule",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "dog",
+    "related_price_id": "heartworm_prevention_year",
+    "why": "A visible schedule helps avoid gaps and makes the annual prevention cost easier to budget."
+  },
+  {
+    "id": "check_mouth",
+    "title": "Take a quick look at {name}'s mouth",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "both",
+    "related_price_id": "tooth_extraction",
+    "why": "Regular checks help you notice a chipped tooth or mouth change before the next estimate is a surprise."
+  },
+  {
+    "id": "weekly_weigh_in",
+    "title": "Do an at-home weigh-in",
+    "cadence": "weekly",
+    "xp": 30,
+    "species": "both",
+    "related_price_id": "wellness_exam",
+    "why": "A simple weight log gives your veterinarian useful context at the next wellness exam."
+  },
+  {
+    "id": "review_vaccine_record_dog",
+    "title": "Review {name}'s vaccine record",
+    "cadence": "weekly",
+    "xp": 30,
+    "species": "dog",
+    "related_price_id": "dhpp_vaccine",
+    "why": "Knowing what is due makes the next preventive visit easier to budget and avoids duplicate records."
+  },
+  {
+    "id": "review_vaccine_record_cat",
+    "title": "Review {name}'s vaccine record",
+    "cadence": "weekly",
+    "xp": 30,
+    "species": "cat",
+    "related_price_id": "fvrcp_vaccine",
+    "why": "Knowing what is due makes the next preventive visit easier to budget and avoids duplicate records."
+  },
+  {
+    "id": "check_microchip_record",
+    "title": "Confirm the microchip contact details",
+    "cadence": "weekly",
+    "xp": 30,
+    "species": "both",
+    "related_price_id": "microchip",
+    "why": "Current registration details protect the value of the microchip you already paid for."
+  },
+  {
+    "id": "plan_wellness_visit",
+    "title": "Check when the next wellness visit is due",
+    "cadence": "weekly",
+    "xp": 30,
+    "species": "both",
+    "related_price_id": "wellness_exam",
+    "why": "Planning ahead turns a routine exam into a budget line instead of a surprise bill."
+  }
+]
