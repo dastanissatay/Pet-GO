@@ -103,10 +103,31 @@ interface UserState {
   completions: { questId: string; periodKey: string; localDate: string; xp: number }[];
 }
 
-const users = new Map<string, UserState>();
+// Saved in the browser so a page reload doesn't wipe the mock pet and progress.
+const STORAGE_KEY = "petgo:mockdb";
+
+function loadUsers(): Map<string, UserState> {
+  try {
+    const raw = globalThis.localStorage?.getItem(STORAGE_KEY);
+    return raw ? new Map(JSON.parse(raw) as [string, UserState][]) : new Map();
+  } catch {
+    return new Map();
+  }
+}
+
+const users = loadUsers();
+
+export function saveDb(): void {
+  try {
+    globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify([...users]));
+  } catch {
+    // Storage blocked: the mock still works for this page load.
+  }
+}
 
 export function resetDb(): void {
   users.clear();
+  saveDb();
 }
 
 export function userFor(deviceId: string): UserState {
@@ -118,13 +139,13 @@ export function userFor(deviceId: string): UserState {
   return user;
 }
 
-let counter = 0;
-const id = () => `00000000-0000-4000-8000-${String(++counter).padStart(12, "0")}`;
+const id = () => crypto.randomUUID();
 
 export function createPet(user: UserState, body: PetCreate): PetRead {
   user.pet = { ...body, id: id() };
   user.expenses = [];
   user.completions = [];
+  saveDb();
   return user.pet;
 }
 
@@ -206,6 +227,7 @@ export function completeQuest(
   if (user.completions.some((c) => c.questId === questId && c.periodKey === key)) return "already_done";
   const before = progressFor(user, localDate).stage;
   user.completions.push({ questId, periodKey: key, localDate, xp: def.xp });
+  saveDb();
   const progress = progressFor(user, localDate);
   return { progress, leveled_up: progress.stage > before };
 }
@@ -215,11 +237,13 @@ export function undoQuest(user: UserState, questId: string, localDate: string): 
   if (!def) return;
   const key = periodKey(def, localDate);
   user.completions = user.completions.filter((c) => !(c.questId === questId && c.periodKey === key));
+  saveDb();
 }
 
 export function addExpense(user: UserState, body: ExpenseCreate): ExpenseRead {
   const expense: ExpenseRead = { ...body, id: id() };
   user.expenses = [expense, ...user.expenses].sort((a, b) => b.spent_on.localeCompare(a.spent_on));
+  saveDb();
   return expense;
 }
 

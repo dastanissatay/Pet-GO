@@ -6,8 +6,8 @@ import "@/index.css";
 async function enableMocking(): Promise<void> {
   // Dev-only switch so the UI can run before the backend exists.
   if (!import.meta.env.DEV || import.meta.env.VITE_USE_MOCKS !== "true") return;
-  const { worker } = await import("@/mocks/browser");
-  await worker.start({ onUnhandledRequest: "bypass" });
+  const { installMockApi } = await import("@/mocks/browser");
+  await installMockApi();
 }
 
 void enableMocking().then(() => {

@@ -9,6 +9,7 @@ import {
   progressFor,
   questsFor,
   SAMPLES,
+  saveDb,
   summaryFor,
   undoQuest,
   userFor,
@@ -155,6 +156,7 @@ export const handlers = [
     if (!device) return err(400, "DEVICE_ID_REQUIRED", "Missing device ID.");
     const { plan } = (await request.json()) as SubscriptionCreate;
     userFor(device).plan = plan;
+    saveDb();
     return HttpResponse.json({ plan });
   }),
 ];

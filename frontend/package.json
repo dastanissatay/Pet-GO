@@ -12,8 +12,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "gen-api": "openapi-typescript ${OPENAPI_URL:-http://localhost:8000/openapi.json} -o src/api/generated/schema.ts",
-    "msw:init": "msw init public/ --save"
+    "gen-api": "openapi-typescript ${OPENAPI_URL:-http://localhost:8000/openapi.json} -o src/api/generated/schema.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -59,10 +58,5 @@
     "typescript-eslint": "^8.19.0",
     "vite": "^6.0.7",
     "vitest": "^2.1.8"
-  },
-  "msw": {
-    "workerDirectory": [
-      "public"
-    ]
   }
 }
