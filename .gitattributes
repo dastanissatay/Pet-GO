@@ -1,0 +1,8 @@
+# Keep LF everywhere: these files run inside Linux containers and on the server.
+* text=auto eol=lf
+
+*.ps1 text eol=crlf
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
