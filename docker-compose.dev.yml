@@ -1,0 +1,34 @@
+# Dev overrides: hot reload, bind-mounted source, ports open on localhost.
+services:
+  db:
+    ports:
+      # Change DB_PORT in .env if 5432 is already taken on your machine.
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+
+  backend:
+    build:
+      context: ./backend
+      target: dev
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    environment:
+      # Separate database for tests; created on the first test run.
+      TEST_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-petgo}:${POSTGRES_PASSWORD:-petgo}@db:5432/${POSTGRES_DB:-petgo}_test
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    # The frontend's "build" stage has Node, pnpm and the installed packages,
+    # so dev reuses it and runs the Vite dev server instead of nginx.
+    build:
+      context: ./frontend
+      target: build
+    command: ["pnpm", "dev"]
+    environment:
+      VITE_PROXY_TARGET: http://backend:8000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules

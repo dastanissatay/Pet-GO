@@ -8,7 +8,6 @@ React 18 + TypeScript (strict) + Vite + React Router + TanStack Query + Tailwind
 ```bash
 cd frontend
 pnpm install          # creates pnpm-lock.yaml; commit it (the Docker build needs it)
-pnpm msw:init         # writes public/mockServiceWorker.js for dev mocks; commit it
 ```
 
 ## Develop
@@ -17,7 +16,7 @@ pnpm msw:init         # writes public/mockServiceWorker.js for dev mocks; commit
 # Against the backend (Vite proxies /api to http://localhost:8000):
 pnpm dev
 
-# Without a backend, using the in-browser mock API (src/mocks):
+# Without a backend, using the in-page mock API (src/mocks). Mock data resets on reload:
 VITE_USE_MOCKS=true pnpm dev
 ```
 
