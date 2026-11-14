@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Pet&GO palette as RGB channels so Tailwind can apply opacity. */
+    --butter: 255 241 214;
+    --ink: 22 22 22;
+    --surface: 255 255 255;
+    --coral: 255 107 74;
+    --sun: 255 216 77;
+    --mint: 158 230 190;
+    --lilac: 217 204 255;
+    --sky: 169 216 255;
+    --muted: 74 74 74;
+    --error: 179 38 30;
+    --line: 230 220 198;
+    --skeleton: 239 230 210;
+    /* Avatar fills */
+    --fur: 242 179 107;
+    --fur-dark: 122 74 34;
+    --cat: 181 181 181;
+    --cat-dark: 142 142 142;
+    --radius: 16px;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply min-h-screen bg-butter font-sans text-ink antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-extrabold tracking-tight;
+  }
+
+  :focus-visible {
+    outline: 3px solid rgb(var(--sun));
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .money {
+    @apply font-display font-extrabold tabular-nums;
+  }
+
+  .striped-range {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgb(var(--mint)) 0 6px,
+      rgb(var(--surface)) 6px 10px
+    );
+  }
+}
