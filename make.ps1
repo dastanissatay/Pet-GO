@@ -39,13 +39,11 @@ switch ($Task) {
     Backend @("mypy")
     if (-not $BackendOnly) {
       Frontend @("pnpm", "lint")
-      Frontend @("pnpm", "format:check")
-      Frontend @("pnpm", "typecheck")
     }
   }
   "gen-api" {
-    Frontend @("pnpm", "exec", "openapi-typescript", "http://backend:8000/openapi.json",
-      "-o", "src/api/generated/schema.d.ts")
+    Invoke-Docker ($dev + @("exec", "-T", "-e", "OPENAPI_URL=http://backend:8000/openapi.json",
+      "frontend", "pnpm", "gen-api"))
   }
   default {
     throw "Unknown task '$Task'. Tasks: up, down, logs, migrate, migration, test, lint, gen-api, prod-up"

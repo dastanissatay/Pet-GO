@@ -63,6 +63,8 @@ async def test_list_filters_by_species_and_shows_typical_cost(
         "source_url": "https://example.com/exam",
     }
     assert body["daily"][1]["typical_cost"] is None
+    # quests.json says {name}; the API fills in the pet's name.
+    assert body["daily"][0]["title"] == "Brush Biscuit's teeth"
     assert not any(q["completed"] for q in body["daily"] + body["weekly"])
 
 

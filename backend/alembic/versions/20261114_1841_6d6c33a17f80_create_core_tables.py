@@ -1,8 +1,8 @@
 """create core tables
 
-Revision ID: 42feac1b2ddf
+Revision ID: 6d6c33a17f80
 Revises:
-Create Date: 2026-11-14 18:27:31.333262
+Create Date: 2026-11-14 18:41:38.766915
 """
 
 from collections.abc import Sequence
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-revision: str = "42feac1b2ddf"
+revision: str = "6d6c33a17f80"
 down_revision: str | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
@@ -120,7 +120,7 @@ def upgrade() -> None:
         sa.Column("pet_id", sa.Uuid(), nullable=False),
         sa.Column("spent_on", sa.Date(), nullable=False),
         sa.Column("amount", sa.Numeric(precision=10, scale=2), nullable=False),
-        sa.Column("category", sa.String(length=40), nullable=False),
+        sa.Column("category", sa.String(length=20), nullable=False),
         sa.Column("note", sa.String(length=200), server_default="", nullable=False),
         sa.Column("id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False),
         sa.Column(
@@ -135,10 +135,11 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
             nullable=False,
         ),
-        sa.CheckConstraint("amount > 0", name=op.f("ck_expenses_amount_positive")),
         sa.CheckConstraint(
-            "char_length(category) > 0", name=op.f("ck_expenses_category_not_empty")
+            "category IN ('wellness', 'dental', 'medication', 'emergency', 'food', 'grooming', 'other')",
+            name=op.f("ck_expenses_category_valid"),
         ),
+        sa.CheckConstraint("amount > 0", name=op.f("ck_expenses_amount_positive")),
         sa.ForeignKeyConstraint(
             ["pet_id"], ["pets.id"], name=op.f("fk_expenses_pet_id_pets"), ondelete="CASCADE"
         ),

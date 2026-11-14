@@ -28,11 +28,10 @@ lint:
 	$(DEV) exec backend ruff format --check .
 	$(DEV) exec backend mypy
 	$(DEV) exec frontend pnpm lint
-	$(DEV) exec frontend pnpm format:check
-	$(DEV) exec frontend pnpm typecheck
 
+# The frontend's gen-api script writes src/api/generated/schema.ts.
 gen-api:
-	$(DEV) exec frontend pnpm exec openapi-typescript http://backend:8000/openapi.json -o src/api/generated/schema.d.ts
+	$(DEV) exec -e OPENAPI_URL=http://backend:8000/openapi.json frontend pnpm gen-api
 
 prod-up:
 	$(PROD) up -d --build

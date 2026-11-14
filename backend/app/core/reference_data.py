@@ -1,24 +1,22 @@
 """Read-only reference data (prices, multipliers, quests, breeds, samples).
 
 Loaded from the JSON files in app/data, validated once at startup and kept in memory.
-The content of those files belongs to Person 3; the shapes below are the contract.
+The content of those files belongs to Person 3; the shapes below follow their files.
 Every price shown anywhere in the app must come from prices.json (spec rule 3).
 """
 
 import json
-import logging
+import re
 from dataclasses import dataclass
 from decimal import Decimal
 from functools import lru_cache
 from pathlib import Path
-from typing import Self
+from typing import Any, Self
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError, model_validator
 
 from app.core.config import get_settings
 from app.core.types import AnySpecies, Cadence, SizeClass, Species, Worry
-
-logger = logging.getLogger(__name__)
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
@@ -27,20 +25,11 @@ class ReferenceDataError(RuntimeError):
     """A reference file is missing or does not match its schema. Stops startup."""
 
 
-class _Row(BaseModel):
+class _Strict(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
 
-class _File(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
-
-    # True marks stand-in content that must be replaced before launch.
-    placeholder: bool = Field(default=False, alias="_placeholder")
-    # Free-text note for whoever edits the file. Ignored by the app.
-    note: str | None = Field(default=None, alias="_note")
-
-
-class PriceRow(_Row):
+class PriceRow(_Strict):
     id: str = Field(min_length=1, max_length=64)
     name: str = Field(min_length=1)
     aliases: list[str] = []
@@ -48,10 +37,10 @@ class PriceRow(_Row):
     low: Decimal = Field(ge=0)
     high: Decimal = Field(ge=0)
     category: str = Field(min_length=1, max_length=40)
+    # Routine rows make up the yearly forecast.
     routine: bool
     source_url: str = Field(pattern=r"^https?://")
-    # How often a routine cost happens in a year (12 for a monthly preventive).
-    # low/high are always the price of one occurrence.
+    # How often the cost occurs in a year; low/high are the price of one occurrence.
     times_per_year: Decimal = Field(default=Decimal(1), gt=0, le=365)
 
     @model_validator(mode="after")
@@ -61,53 +50,85 @@ class PriceRow(_Row):
         return self
 
 
-class PricesFile(_File):
-    items: list[PriceRow] = Field(min_length=1)
-
-    @model_validator(mode="after")
-    def ids_unique(self) -> Self:
-        ids = [row.id for row in self.items]
-        if len(ids) != len(set(ids)):
-            raise ValueError("price ids must be unique")
-        return self
-
-
-class AgeBand(_Row):
-    # Upper bound in years, inclusive. null on the last band means "and older".
-    max_age_years: int | None = Field(ge=0)
+class Band(_Strict):
+    band: str = Field(min_length=1)
     multiplier: Decimal = Field(gt=0)
+    basis: str = ""
 
 
-class Multipliers(_File):
-    species: dict[Species, Decimal]
-    size: dict[SizeClass, Decimal]
-    age_bands: list[AgeBand] = Field(min_length=1)
+_UNDER = re.compile(r"^under_(\d+)$")
+_RANGE = re.compile(r"^(\d+)_(\d+)$")
+_PLUS = re.compile(r"^(\d+)_plus$")
+
+
+def age_band_range(band: str) -> tuple[int, int | None]:
+    """'under_1' -> (0, 0), '1_6' -> (1, 6), '7_plus' -> (7, None). Years, inclusive."""
+    if match := _UNDER.match(band):
+        return 0, int(match.group(1)) - 1
+    if match := _RANGE.match(band):
+        return int(match.group(1)), int(match.group(2))
+    if match := _PLUS.match(band):
+        return int(match.group(1)), None
+    raise ValueError(f"age band '{band}' must look like under_N, A_B or N_plus")
+
+
+class Multipliers(_Strict):
+    """Forecast factors: size (dogs only), age band per species, optional species factor."""
+
+    size: dict[Species, list[Band]] = {}
+    age: dict[Species, list[Band]]
+    # Optional overall factor per species; 1 when absent.
+    species: dict[Species, Decimal] = {}
+    sources: list[str] = []
 
     @model_validator(mode="after")
-    def complete_and_ordered(self) -> Self:
-        if set(self.species) != {"dog", "cat"}:
-            raise ValueError("species multipliers need both dog and cat")
-        if set(self.size) != {"small", "medium", "large"}:
-            raise ValueError("size multipliers need small, medium and large")
-        if any(value <= 0 for value in (*self.species.values(), *self.size.values())):
-            raise ValueError("multipliers must be above 0")
-        bounds = [band.max_age_years for band in self.age_bands]
-        if bounds[-1] is not None or None in bounds[:-1]:
-            raise ValueError("only the last age band may have max_age_years null")
-        finite = [bound for bound in bounds if bound is not None]
-        if finite != sorted(set(finite)):
-            raise ValueError("age bands must be in ascending order")
+    def complete_and_contiguous(self) -> Self:
+        dog_sizes = {band.band for band in self.size.get("dog", [])}
+        if dog_sizes != {"small", "medium", "large"}:
+            raise ValueError("size.dog needs exactly the bands small, medium and large")
+        for species in ("dog", "cat"):
+            bands = self.age.get(species)
+            if not bands:
+                raise ValueError(f"age.{species} needs at least one band")
+            expected_start = 0
+            ranges = [age_band_range(band.band) for band in bands]
+            for index, (start, end) in enumerate(ranges):
+                if start != expected_start:
+                    raise ValueError(f"age.{species} bands must be in order with no gaps")
+                if end is None:
+                    if index != len(ranges) - 1:
+                        raise ValueError(f"age.{species}: only the last band may be open-ended")
+                    break
+                expected_start = end + 1
+            else:
+                raise ValueError(f"age.{species}: the last band must be open-ended (N_plus)")
+        if any(value <= 0 for value in self.species.values()):
+            raise ValueError("species multipliers must be above 0")
         return self
 
-    def for_age(self, age_years: int) -> Decimal:
-        for band in self.age_bands:
-            if band.max_age_years is None or age_years <= band.max_age_years:
+    def size_factor(self, species: Species, size_class: SizeClass | None) -> Decimal:
+        if size_class is None:
+            return Decimal(1)
+        for band in self.size.get(species, []):
+            if band.band == size_class:
                 return band.multiplier
-        return self.age_bands[-1].multiplier
+        return Decimal(1)
+
+    def age_factor(self, species: Species, age_years: int) -> Decimal:
+        bands = self.age[species]
+        for band in bands:
+            start, end = age_band_range(band.band)
+            if age_years >= start and (end is None or age_years <= end):
+                return band.multiplier
+        return bands[-1].multiplier
+
+    def species_factor(self, species: Species) -> Decimal:
+        return self.species.get(species, Decimal(1))
 
 
-class QuestRow(_Row):
+class QuestRow(_Strict):
     id: str = Field(min_length=1, max_length=64)
+    # May contain {name}; the API fills in the pet's name.
     title: str = Field(min_length=1)
     cadence: Cadence
     xp: int = Field(gt=0, le=1000)
@@ -116,23 +137,12 @@ class QuestRow(_Row):
     why: str = Field(min_length=1)
 
 
-class QuestsFile(_File):
-    items: list[QuestRow] = Field(min_length=1)
-
-    @model_validator(mode="after")
-    def ids_unique(self) -> Self:
-        ids = [row.id for row in self.items]
-        if len(ids) != len(set(ids)):
-            raise ValueError("quest ids must be unique")
-        return self
-
-
-class BreedsFile(_File):
+class BreedsFile(_Strict):
     dog: list[str] = Field(min_length=1)
     cat: list[str] = Field(min_length=1)
 
 
-class SamplePet(_Row):
+class SamplePet(_Strict):
     """Same fields as PetCreate. A test checks the sample passes PetCreate validation."""
 
     name: str
@@ -145,7 +155,7 @@ class SamplePet(_Row):
     worry: Worry
 
 
-class SamplesFile(_File):
+class SamplesFile(_Strict):
     pet: SamplePet
     estimate_text: str = Field(min_length=1)
     receipt_text: str = Field(min_length=1)
@@ -159,26 +169,42 @@ class ReferenceData:
     quests: tuple[QuestRow, ...]
     breeds: BreedsFile
     samples: SamplesFile
-    is_placeholder: bool
 
 
-def _read[T: _File](data_dir: Path, name: str, model: type[T]) -> T:
+_PRICES = TypeAdapter(list[PriceRow])
+_QUESTS = TypeAdapter(list[QuestRow])
+
+
+def _read_json(data_dir: Path, name: str) -> Any:
     try:
-        raw = json.loads((data_dir / name).read_text(encoding="utf-8"))
-        return model.model_validate(raw)
-    except (OSError, json.JSONDecodeError, ValidationError) as exc:
-        raise ReferenceDataError(f"{name} is missing or invalid: {exc}") from exc
+        return json.loads((data_dir / name).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ReferenceDataError(f"{name} is missing or not valid JSON: {exc}") from exc
+
+
+def _unique_ids(name: str, ids: list[str]) -> None:
+    duplicates = sorted({item for item in ids if ids.count(item) > 1})
+    if duplicates:
+        raise ReferenceDataError(f"{name}: duplicate ids {duplicates}")
 
 
 def load_reference_data(data_dir: Path = DATA_DIR) -> ReferenceData:
-    prices = _read(data_dir, "prices.json", PricesFile)
-    multipliers = _read(data_dir, "multipliers.json", Multipliers)
-    quests = _read(data_dir, "quests.json", QuestsFile)
-    breeds = _read(data_dir, "breeds.json", BreedsFile)
-    samples = _read(data_dir, "samples.json", SamplesFile)
+    try:
+        prices = _PRICES.validate_python(_read_json(data_dir, "prices.json"))
+        multipliers = Multipliers.model_validate(_read_json(data_dir, "multipliers.json"))
+        quests = _QUESTS.validate_python(_read_json(data_dir, "quests.json"))
+        breeds = BreedsFile.model_validate(_read_json(data_dir, "breeds.json"))
+        samples = SamplesFile.model_validate(_read_json(data_dir, "samples.json"))
+    except ValidationError as exc:
+        raise ReferenceDataError(f"reference data is invalid: {exc}") from exc
 
-    prices_by_id = {row.id: row for row in prices.items}
-    for quest in quests.items:
+    if not prices or not quests:
+        raise ReferenceDataError("prices.json and quests.json must not be empty")
+    _unique_ids("prices.json", [row.id for row in prices])
+    _unique_ids("quests.json", [row.id for row in quests])
+
+    prices_by_id = {row.id: row for row in prices}
+    for quest in quests:
         if quest.related_price_id is not None and quest.related_price_id not in prices_by_id:
             raise ReferenceDataError(
                 f"quests.json: quest '{quest.id}' points to unknown price "
@@ -186,19 +212,15 @@ def load_reference_data(data_dir: Path = DATA_DIR) -> ReferenceData:
             )
 
     return ReferenceData(
-        prices=tuple(prices.items),
+        prices=tuple(prices),
         prices_by_id=prices_by_id,
         multipliers=multipliers,
-        quests=tuple(quests.items),
+        quests=tuple(quests),
         breeds=breeds,
         samples=samples,
-        is_placeholder=any(f.placeholder for f in (prices, multipliers, quests, breeds, samples)),
     )
 
 
 @lru_cache
 def get_reference_data() -> ReferenceData:
-    data = load_reference_data(get_settings().reference_data_dir or DATA_DIR)
-    if data.is_placeholder:
-        logger.warning("Reference data contains placeholder files. Replace them before launch.")
-    return data
+    return load_reference_data(get_settings().reference_data_dir or DATA_DIR)

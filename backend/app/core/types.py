@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Annotated, Literal
+from typing import Annotated, Literal, get_args
 
 from pydantic import PlainSerializer
 
@@ -10,6 +10,11 @@ Worry = Literal["surprise", "monthly", "normal"]
 Plan = Literal["free", "monthly", "yearly"]
 PaidPlan = Literal["monthly", "yearly"]
 Cadence = Literal["daily", "weekly"]
+# Shared with the frontend (src/features/expenses/categories.ts) and the DB check.
+ExpenseCategory = Literal[
+    "wellness", "dental", "medication", "emergency", "food", "grooming", "other"
+]
+EXPENSE_CATEGORIES: tuple[str, ...] = get_args(ExpenseCategory)
 
 # Money is Decimal everywhere in Python and Numeric in the database. In JSON responses it
 # goes out as a number, so the frontend does not have to parse strings.

@@ -11,7 +11,7 @@ def _expense(**overrides: Any) -> dict[str, Any]:
     return {
         "spent_on": TODAY.isoformat(),
         "amount": "42.50",
-        "category": "Checkups",
+        "category": "wellness",
         "note": "Wellness exam",
         **overrides,
     }
@@ -35,6 +35,12 @@ async def test_create_and_list_expenses(client: httpx.AsyncClient, pet: dict[str
     assert [item["spent_on"] for item in body["items"]] == [TODAY.isoformat(), older]
 
 
+async def test_null_note_is_stored_as_empty(client: httpx.AsyncClient, pet: dict[str, Any]) -> None:
+    response = await client.post(_url(pet), json=_expense(note=None))
+    assert response.status_code == 201
+    assert response.json()["note"] == ""
+
+
 async def test_list_is_paginated(client: httpx.AsyncClient, pet: dict[str, Any]) -> None:
     for amount in (1, 2, 3):
         await client.post(_url(pet), json=_expense(amount=amount))
@@ -50,7 +56,7 @@ async def test_list_is_paginated(client: httpx.AsyncClient, pet: dict[str, Any])
         ({"amount": 0}, "amount"),
         ({"amount": -5}, "amount"),
         ({"amount": "1.005"}, "amount"),
-        ({"category": ""}, "category"),
+        ({"category": "Checkups"}, "category"),
         ({"spent_on": "11/14/2026"}, "spent_on"),
     ],
 )

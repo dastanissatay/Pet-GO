@@ -58,6 +58,11 @@ def compute_streak(days: set[date], today: date) -> int:
     return streak
 
 
+def personalize(text: str, pet_name: str) -> str:
+    """Quest copy in quests.json may say {name}; show the pet's name instead."""
+    return text.replace("{name}", pet_name)
+
+
 def check_local_date(local_date: date, today_utc: date) -> None:
     if abs((local_date - today_utc).days) > MAX_LOCAL_DATE_SKEW_DAYS:
         raise UnprocessableError(
@@ -118,10 +123,10 @@ async def list_quests(
     def to_read(quest: QuestRow) -> QuestRead:
         return QuestRead(
             id=quest.id,
-            title=quest.title,
+            title=personalize(quest.title, pet.name),
             cadence=quest.cadence,
             xp=quest.xp,
-            why=quest.why,
+            why=personalize(quest.why, pet.name),
             completed=(quest.id, period_key(quest.cadence, local_date)) in done,
             typical_cost=_typical_cost(data, quest),
         )

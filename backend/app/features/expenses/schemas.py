@@ -5,9 +5,8 @@ from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
-from app.core.types import Money
+from app.core.types import ExpenseCategory, Money
 
-Category = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=40)]
 Note = Annotated[str, StringConstraints(strip_whitespace=True, max_length=200)]
 
 
@@ -16,10 +15,8 @@ class ExpenseCreate(BaseModel):
 
     spent_on: date
     amount: Decimal = Field(gt=0, le=Decimal("100000"), max_digits=10, decimal_places=2)
-    # Use a forecast category name ("Checkups", "Dental", ...) so spending lines up
-    # with the forecast, or "Other".
-    category: Category
-    note: Note = ""
+    category: ExpenseCategory
+    note: Note | None = None
 
 
 class ExpenseRead(BaseModel):
@@ -28,7 +25,7 @@ class ExpenseRead(BaseModel):
     id: uuid.UUID
     spent_on: date
     amount: Money
-    category: str
+    category: ExpenseCategory
     note: str
     created_at: datetime
 

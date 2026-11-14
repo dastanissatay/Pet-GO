@@ -1,40 +1,38 @@
-{
-  "items": [
+[
     {
-      "id": "d-both",
-      "title": "Daily for both",
-      "cadence": "daily",
-      "xp": 10,
-      "species": "both",
-      "related_price_id": "exam",
-      "why": "Test quest."
+        "id":  "d-both",
+        "title":  "Brush {name}'s teeth",
+        "cadence":  "daily",
+        "xp":  10,
+        "species":  "both",
+        "related_price_id":  "exam",
+        "why":  "Test quest."
     },
     {
-      "id": "d-dog",
-      "title": "Daily for dogs",
-      "cadence": "daily",
-      "xp": 10,
-      "species": "dog",
-      "related_price_id": null,
-      "why": "Test quest."
+        "id":  "d-dog",
+        "title":  "Daily for dogs",
+        "cadence":  "daily",
+        "xp":  10,
+        "species":  "dog",
+        "related_price_id":  null,
+        "why":  "Test quest."
     },
     {
-      "id": "d-cat",
-      "title": "Daily for cats",
-      "cadence": "daily",
-      "xp": 10,
-      "species": "cat",
-      "related_price_id": null,
-      "why": "Test quest."
+        "id":  "d-cat",
+        "title":  "Daily for cats",
+        "cadence":  "daily",
+        "xp":  10,
+        "species":  "cat",
+        "related_price_id":  null,
+        "why":  "Test quest."
     },
     {
-      "id": "w-both",
-      "title": "Weekly for both",
-      "cadence": "weekly",
-      "xp": 30,
-      "species": "both",
-      "related_price_id": "preventive",
-      "why": "Test quest."
+        "id":  "w-both",
+        "title":  "Weekly for both",
+        "cadence":  "weekly",
+        "xp":  30,
+        "species":  "both",
+        "related_price_id":  "preventive",
+        "why":  "Test quest."
     }
-  ]
-}
+]

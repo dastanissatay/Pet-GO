@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+from app.core.types import Species
 from app.features.pets.schemas import PetCreate
 
 
@@ -9,3 +10,8 @@ class SamplesRead(BaseModel):
     pet: PetCreate
     estimate_text: str
     receipt_text: str
+
+
+class BreedRead(BaseModel):
+    name: str
+    species: Species

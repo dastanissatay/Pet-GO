@@ -24,7 +24,14 @@ def _mid_sentence(name: str) -> str:
     return name[:1].lower() + name[1:]
 
 
+# Keeps the category note to one line when a category has many rows.
+MAX_NAMES_IN_NOTE = 3
+
+
 def _join_names(names: list[str]) -> str:
+    if len(names) > MAX_NAMES_IN_NOTE:
+        shown = names[:MAX_NAMES_IN_NOTE]
+        return ", ".join(shown) + f" and {len(names) - len(shown)} more"
     if len(names) <= 2:
         return " and ".join(names)
     return ", ".join(names[:-1]) + " and " + names[-1]
@@ -34,9 +41,10 @@ def pet_factor(
     data: ReferenceData, species: Species, size_class: SizeClass | None, age_years: int
 ) -> Decimal:
     """Species x size (dogs only) x age-band multiplier from multipliers.json."""
-    factor = data.multipliers.species[species] * data.multipliers.for_age(age_years)
-    if species == "dog" and size_class is not None:
-        factor *= data.multipliers.size[size_class]
+    multipliers = data.multipliers
+    factor = multipliers.species_factor(species) * multipliers.age_factor(species, age_years)
+    if species == "dog":
+        factor *= multipliers.size_factor(species, size_class)
     return factor
 
 

@@ -19,9 +19,12 @@ services:
       - ./backend:/app
 
   frontend:
+    # The frontend's "build" stage has Node, pnpm and the installed packages,
+    # so dev reuses it and runs the Vite dev server instead of nginx.
     build:
       context: ./frontend
-      target: dev
+      target: build
+    command: ["pnpm", "dev"]
     environment:
       VITE_PROXY_TARGET: http://backend:8000
     ports:

@@ -1,9 +1,22 @@
 {
-  "species": { "dog": 1.0, "cat": 0.5 },
-  "size": { "small": 0.5, "medium": 1.0, "large": 2.0 },
-  "age_bands": [
-    { "max_age_years": 1, "multiplier": 1.0 },
-    { "max_age_years": 7, "multiplier": 1.0 },
-    { "max_age_years": null, "multiplier": 1.5 }
-  ]
+  "size": {
+    "dog": [
+      { "band": "small", "multiplier": 0.5 },
+      { "band": "medium", "multiplier": 1.0 },
+      { "band": "large", "multiplier": 2.0 }
+    ]
+  },
+  "age": {
+    "dog": [
+      { "band": "under_1", "multiplier": 1.0 },
+      { "band": "1_7", "multiplier": 1.0 },
+      { "band": "8_plus", "multiplier": 1.5 }
+    ],
+    "cat": [
+      { "band": "under_1", "multiplier": 1.0 },
+      { "band": "1_7", "multiplier": 1.0 },
+      { "band": "8_plus", "multiplier": 1.5 }
+    ]
+  },
+  "species": { "dog": 1.0, "cat": 0.5 }
 }

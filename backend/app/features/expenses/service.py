@@ -26,7 +26,16 @@ async def create_expense(
                 "fields": [{"field": "spent_on", "message": "The date can't be in the future."}]
             },
         )
-    expense = await repository.add(session, Expense(pet_id=pet.id, **data.model_dump()))
+    expense = await repository.add(
+        session,
+        Expense(
+            pet_id=pet.id,
+            spent_on=data.spent_on,
+            amount=data.amount,
+            category=data.category,
+            note=data.note or "",
+        ),
+    )
     await session.commit()
     return expense
 

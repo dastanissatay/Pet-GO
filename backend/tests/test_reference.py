@@ -22,21 +22,33 @@ async def test_samples_returns_a_valid_pet_and_texts(client: httpx.AsyncClient) 
 
 async def test_breeds_prefix_matches_come_first(client: httpx.AsyncClient) -> None:
     response = await client.get("/api/v1/breeds", params={"species": "dog", "q": "LAB"})
-    assert response.json() == {"items": ["Labradoodle", "Labrador Retriever"], "total": 2}
+    assert response.json() == {
+        "items": [
+            {"name": "Labradoodle", "species": "dog"},
+            {"name": "Labrador Retriever", "species": "dog"},
+        ],
+        "total": 2,
+    }
 
 
 async def test_breeds_substring_and_pagination(client: httpx.AsyncClient) -> None:
     response = await client.get(
         "/api/v1/breeds", params={"species": "dog", "q": "retriever", "limit": 1, "offset": 1}
     )
-    assert response.json() == {"items": ["Labrador Retriever"], "total": 2}
+    assert response.json() == {
+        "items": [{"name": "Labrador Retriever", "species": "dog"}],
+        "total": 2,
+    }
 
 
 async def test_breeds_without_query_lists_species_alphabetically(
     client: httpx.AsyncClient,
 ) -> None:
     response = await client.get("/api/v1/breeds", params={"species": "cat"})
-    assert response.json() == {"items": ["Maine Coon", "Siamese"], "total": 2}
+    assert response.json() == {
+        "items": [{"name": "Maine Coon", "species": "cat"}, {"name": "Siamese", "species": "cat"}],
+        "total": 2,
+    }
 
 
 @pytest.mark.parametrize(
@@ -67,7 +79,7 @@ def _copy_fixtures(tmp_path: Path) -> Path:
 def test_quest_pointing_to_unknown_price_fails(tmp_path: Path) -> None:
     data_dir = _copy_fixtures(tmp_path)
     quests = json.loads((data_dir / "quests.json").read_text())
-    quests["items"][0]["related_price_id"] = "does-not-exist"
+    quests[0]["related_price_id"] = "does-not-exist"
     (data_dir / "quests.json").write_text(json.dumps(quests))
 
     with pytest.raises(ReferenceDataError, match="unknown price"):
@@ -77,7 +89,7 @@ def test_quest_pointing_to_unknown_price_fails(tmp_path: Path) -> None:
 def test_price_with_high_below_low_fails(tmp_path: Path) -> None:
     data_dir = _copy_fixtures(tmp_path)
     prices = json.loads((data_dir / "prices.json").read_text())
-    prices["items"][0]["high"] = 1
+    prices[0]["high"] = 1
     (data_dir / "prices.json").write_text(json.dumps(prices))
 
     with pytest.raises(ReferenceDataError, match="high is below low"):
