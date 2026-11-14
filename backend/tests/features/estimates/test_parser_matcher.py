@@ -2,16 +2,17 @@ import json
 from decimal import Decimal
 from pathlib import Path
 
+from app.core.reference_data import PriceRow
 from app.features.estimates.matcher import match_price, normalize_description
 from app.features.estimates.parser import parse_estimate_lines
-from app.features.estimates.schemas import PriceReference
 from app.features.estimates.service import verdict_for
 
 DATA_DIR = Path(__file__).parents[3] / "app" / "data"
 
 
-def _prices() -> list[PriceReference]:
-    return [PriceReference.model_validate(row) for row in json.loads((DATA_DIR / "prices.json").read_text())]
+def _prices() -> list[PriceRow]:
+    rows = json.loads((DATA_DIR / "prices.json").read_text())
+    return [PriceRow.model_validate(row) for row in rows]
 
 
 def test_regex_parser_uses_line_total_and_skips_totals() -> None:

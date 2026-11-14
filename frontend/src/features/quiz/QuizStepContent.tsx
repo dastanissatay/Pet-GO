@@ -26,11 +26,17 @@ export function stepCopy(id: StepId, values: Partial<QuizValues>): StepCopy {
     case "age":
       return { title: `How old is ${name}?`, hint: "Your best guess is fine." };
     case "size":
-      return { title: `How big is ${name}?`, hint: "Bigger dogs need bigger doses, so costs change." };
+      return {
+        title: `How big is ${name}?`,
+        hint: "Bigger dogs need bigger doses, so costs change.",
+      };
     case "zip":
       return { title: "What's your ZIP code?", hint: "Vet prices vary a lot by area." };
     case "insured":
-      return { title: `Does ${name} have pet insurance?`, hint: "It changes what you pay out of pocket." };
+      return {
+        title: `Does ${name} have pet insurance?`,
+        hint: "It changes what you pay out of pocket.",
+      };
     case "worry":
       return { title: "What worries you most?", hint: `We'll put that first in ${name}'s plan.` };
   }
@@ -39,7 +45,10 @@ export function stepCopy(id: StepId, values: Partial<QuizValues>): StepCopy {
 function SizeDot({ size }: { size: number }) {
   return (
     <span className="flex h-20 items-end" aria-hidden="true">
-      <span className="rounded-full border-2 border-ink bg-fur" style={{ width: size, height: size }} />
+      <span
+        className="rounded-full border-2 border-ink bg-fur"
+        style={{ width: size, height: size }}
+      />
     </span>
   );
 }
@@ -71,8 +80,18 @@ export function QuizStepContent({ id, form, values, onPick }: QuizStepContentPro
             onPick={(v) => onPick("species", v, true)}
             describedBy={errors.species ? errorId : undefined}
             choices={[
-              { value: "dog", label: "Dog", tone: "sky", visual: <PetAvatar species="dog" stage={1} size={104} label={null} /> },
-              { value: "cat", label: "Cat", tone: "lilac", visual: <PetAvatar species="cat" stage={1} size={104} label={null} /> },
+              {
+                value: "dog",
+                label: "Dog",
+                tone: "sky",
+                visual: <PetAvatar species="dog" stage={1} size={104} label={null} />,
+              },
+              {
+                value: "cat",
+                label: "Cat",
+                tone: "lilac",
+                visual: <PetAvatar species="cat" stage={1} size={104} label={null} />,
+              },
             ]}
           />
           {choiceError(errors.species?.message)}
@@ -87,7 +106,13 @@ export function QuizStepContent({ id, form, values, onPick }: QuizStepContentPro
             <FormItem className="max-w-[460px]">
               <FormLabel className="text-[15px]">Name</FormLabel>
               <FormControl>
-                <Input {...field} autoFocus autoComplete="off" maxLength={40} placeholder="Biscuit" className="h-[60px] text-[22px] font-bold" />
+                <Input
+                  {...field}
+                  autoComplete="off"
+                  maxLength={40}
+                  placeholder="Biscuit"
+                  className="h-[60px] text-[22px] font-bold"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -105,7 +130,12 @@ export function QuizStepContent({ id, form, values, onPick }: QuizStepContentPro
         />
       );
     case "age":
-      return <AgeStepper value={values.age_years ?? 3} onChange={(age) => onPick("age_years", age, false)} />;
+      return (
+        <AgeStepper
+          value={values.age_years ?? 3}
+          onChange={(age) => onPick("age_years", age, false)}
+        />
+      );
     case "size":
       return (
         <>
@@ -115,7 +145,12 @@ export function QuizStepContent({ id, form, values, onPick }: QuizStepContentPro
             onPick={(v) => onPick("size_class", v, true)}
             describedBy={errors.size_class ? errorId : undefined}
             choices={[
-              { value: "small", label: "Small", hint: "Under 20 lb", visual: <SizeDot size={30} /> },
+              {
+                value: "small",
+                label: "Small",
+                hint: "Under 20 lb",
+                visual: <SizeDot size={30} />,
+              },
               { value: "medium", label: "Medium", hint: "20–50 lb", visual: <SizeDot size={50} /> },
               { value: "large", label: "Large", hint: "Over 50 lb", visual: <SizeDot size={76} /> },
             ]}
@@ -135,7 +170,6 @@ export function QuizStepContent({ id, form, values, onPick }: QuizStepContentPro
                 <Input
                   {...field}
                   onChange={(e) => field.onChange(e.target.value.replace(/\D/g, "").slice(0, 5))}
-                  autoFocus
                   inputMode="numeric"
                   autoComplete="postal-code"
                   maxLength={5}
@@ -182,9 +216,17 @@ export function QuizStepContent({ id, form, values, onPick }: QuizStepContentPro
             onPick={(v) => onPick("worry", v, false)}
             describedBy={errors.worry ? errorId : undefined}
             choices={[
-              { value: "surprise", label: "Surprise bills", hint: "A big bill I didn't see coming" },
+              {
+                value: "surprise",
+                label: "Surprise bills",
+                hint: "A big bill I didn't see coming",
+              },
               { value: "monthly", label: "Monthly costs", hint: "Food, meds and care adding up" },
-              { value: "normal", label: "Not sure what's normal", hint: "Is my vet charging a fair price?" },
+              {
+                value: "normal",
+                label: "Not sure what's normal",
+                hint: "Is my vet charging a fair price?",
+              },
             ]}
           />
           {choiceError(errors.worry?.message)}

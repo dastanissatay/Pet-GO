@@ -1,4 +1,5 @@
 import uuid
+from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,7 +26,10 @@ def _field_error(field: str, message: str) -> UnprocessableError:
 
 
 async def create_pet(session: AsyncSession, user: User, data: PetCreate) -> Pet:
-    pet = await repository.add(session, Pet(user_id=user.id, **data.model_dump()))
+    pet = await repository.add(
+        session,
+        Pet(user_id=user.id, created_at=datetime.now(UTC), **data.model_dump()),
+    )
     await session.commit()
     return pet
 

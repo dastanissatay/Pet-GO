@@ -4,6 +4,8 @@ from typing import TypeVar
 import httpx
 from pydantic import BaseModel, ValidationError
 
+from app.core.config import get_settings
+
 ANTHROPIC_MESSAGES_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_VERSION = "2023-06-01"
 
@@ -29,10 +31,12 @@ class AnthropicJsonClient:
         model: str = "claude-haiku-5-5",
         *,
         client: httpx.AsyncClient | None = None,
+        timeout_seconds: float = 20.0,
     ) -> None:
         self._api_key = api_key
         self._model = model
         self._client = client
+        self._timeout_seconds = timeout_seconds
 
     async def parse_json(
         self,
@@ -68,20 +72,39 @@ class AnthropicJsonClient:
                     ANTHROPIC_MESSAGES_URL,
                     headers=headers,
                     json=payload,
-                    timeout=20.0,
+                    timeout=self._timeout_seconds,
                 )
             else:
-                async with httpx.AsyncClient(timeout=20.0) as client:
-                    response = await client.post(ANTHROPIC_MESSAGES_URL, headers=headers, json=payload)
+                async with httpx.AsyncClient(timeout=self._timeout_seconds) as client:
+                    response = await client.post(
+                        ANTHROPIC_MESSAGES_URL, headers=headers, json=payload
+                    )
             response.raise_for_status()
         except httpx.HTTPError as error:
             raise LLMUnavailableError("The language model is unavailable.") from error
 
-        body = response.json()
+        try:
+            body = response.json()
+        except ValueError as error:
+            raise LLMUnavailableError("The language model returned invalid JSON.") from error
         content = body.get("content") if isinstance(body, dict) else None
         if not isinstance(content, list) or not content:
             raise LLMUnavailableError("The language model returned no content.")
         first = content[0]
-        if not isinstance(first, dict) or not isinstance(first.get("text"), str):
+        if not isinstance(first, dict):
             raise LLMUnavailableError("The language model returned no text content.")
-        return first["text"]
+        text = first.get("text")
+        if not isinstance(text, str):
+            raise LLMUnavailableError("The language model returned no text content.")
+        return text
+
+
+def get_llm_client() -> AnthropicJsonClient | None:
+    settings = get_settings()
+    if settings.llm_api_key is None:
+        return None
+    return AnthropicJsonClient(
+        settings.llm_api_key,
+        settings.llm_model,
+        timeout_seconds=settings.llm_timeout_seconds,
+    )

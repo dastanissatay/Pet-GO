@@ -20,7 +20,9 @@ export function useDecodeEstimate() {
   });
 }
 
-export async function loadSampleEstimate(queryClient: ReturnType<typeof useQueryClient>): Promise<string> {
+export async function loadSampleEstimate(
+  queryClient: ReturnType<typeof useQueryClient>,
+): Promise<string> {
   const samples = await queryClient.fetchQuery({
     queryKey: petKeys.samples(),
     queryFn: () => api.get<Samples>("/v1/samples"),

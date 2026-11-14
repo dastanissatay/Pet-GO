@@ -12,7 +12,12 @@ export function DecodeLine({ line }: { line: EstimateLine }) {
           <p className="mt-2 text-sm font-bold">
             Reference: {formatUsdRange(line.range.low, line.range.high)}
             {line.source_url && (
-              <a className="ml-2 underline underline-offset-4" href={line.source_url} target="_blank" rel="noreferrer">
+              <a
+                className="ml-2 underline underline-offset-4"
+                href={line.source_url}
+                target="_blank"
+                rel="noreferrer"
+              >
                 Source
               </a>
             )}

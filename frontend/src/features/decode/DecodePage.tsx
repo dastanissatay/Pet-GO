@@ -40,7 +40,7 @@ export function DecodePage() {
     decode.mutate({ petId: pet.id, text: value });
   }
 
-  async function useSample() {
+  async function loadSample() {
     setIsLoadingSample(true);
     setSampleError(null);
     try {
@@ -63,11 +63,19 @@ export function DecodePage() {
       <header className="mb-7 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="mb-2 font-bold text-coral">Vet estimate decoder</p>
-          <h1 className="font-display text-4xl font-extrabold sm:text-5xl">Know what every line means</h1>
-          <p className="mt-2 max-w-2xl text-muted">Compare {pet.name}'s estimate with sourced US price ranges before you call the clinic.</p>
+          <h1 className="font-display text-4xl font-extrabold sm:text-5xl">
+            Know what every line means
+          </h1>
+          <p className="mt-2 max-w-2xl text-muted">
+            Compare {pet.name}'s estimate with sourced US price ranges before you call the clinic.
+          </p>
         </div>
         {me.isPending && <Chip tone="dashed">Checking free decode…</Chip>}
-        {me.isSuccess && <Chip tone="sun">{me.data.free_decodes_left} free decode{me.data.free_decodes_left === 1 ? "" : "s"} left</Chip>}
+        {me.isSuccess && (
+          <Chip tone="sun">
+            {me.data.free_decodes_left} free decode{me.data.free_decodes_left === 1 ? "" : "s"} left
+          </Chip>
+        )}
         {me.isError && (
           <Button type="button" variant="link" size="sm" onClick={() => void me.refetch()}>
             Decode limit unavailable · Retry
@@ -95,44 +103,88 @@ export function DecodePage() {
             className="mt-2 min-h-[320px] resize-y font-mono text-sm"
           />
           {inputError ? (
-            <p id="estimate-error" role="alert" className="mt-2 text-sm font-bold text-error">{inputError}</p>
+            <p id="estimate-error" role="alert" className="mt-2 text-sm font-bold text-error">
+              {inputError}
+            </p>
           ) : (
-            <p id="estimate-help" className="mt-2 text-sm text-muted">One priced service per line works best. Do not include private information.</p>
+            <p id="estimate-help" className="mt-2 text-sm text-muted">
+              One priced service per line works best. Do not include private information.
+            </p>
           )}
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-            <Button type="button" variant="primary" size="lg" disabled={decode.isPending || isLoadingSample} onClick={() => submit()}>
+            <Button
+              type="button"
+              variant="primary"
+              size="lg"
+              disabled={decode.isPending || isLoadingSample}
+              onClick={() => submit()}
+            >
               {decode.isPending ? "Decoding…" : "Decode estimate"}
             </Button>
-            <Button type="button" variant="secondary" size="lg" disabled={decode.isPending || isLoadingSample} onClick={() => void useSample()}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="lg"
+              disabled={decode.isPending || isLoadingSample}
+              onClick={() => void loadSample()}
+            >
               <Sparkles aria-hidden="true" />
               {isLoadingSample ? "Loading sample…" : "Use sample estimate"}
             </Button>
           </div>
-          {sampleError && <ErrorState className="mt-4" title="Sample didn't load" error={sampleError} onRetry={() => void useSample()} />}
+          {sampleError !== null && (
+            <ErrorState
+              className="mt-4"
+              title="Sample didn't load"
+              error={sampleError}
+              onRetry={() => void loadSample()}
+            />
+          )}
         </Card>
 
         <section aria-live="polite">
           {!decode.data && !decode.isPending && !decode.isError && <DecodeExplainer />}
           {decode.isPending && <DecodeLoading />}
-          {decode.data && !decode.isPending && <DecodeResultPanel result={decode.data} onSave={() => setExpenseOpen(true)} />}
+          {decode.data && !decode.isPending && (
+            <DecodeResultPanel result={decode.data} onSave={() => setExpenseOpen(true)} />
+          )}
           {noPrices && (
-            <EmptyState title="We couldn't find any prices in that" icon={<FileText aria-hidden="true" className="size-9" />}>
-              <p>Try one item per line, for example: <span className="font-mono font-bold">Wellness exam $89.00</span></p>
+            <EmptyState
+              title="We couldn't find any prices in that"
+              icon={<FileText aria-hidden="true" className="size-9" />}
+            >
+              <p>
+                Try one item per line, for example:{" "}
+                <span className="font-mono font-bold">Wellness exam $89.00</span>
+              </p>
               <p className="mt-2 font-bold">This didn't use up your free decode.</p>
             </EmptyState>
           )}
           {atLimit && (
             <Card tone="sun" variant="raised" className="space-y-4">
               <p className="font-display text-2xl font-extrabold">Your free decode is used</p>
-              <p>Unlimited estimate decoding is included with the yearly or monthly plan. Checkout is test mode; nothing is charged.</p>
-              <Button asChild variant="primary" size="lg"><Link to="/results">See upgrade options</Link></Button>
+              <p>
+                Unlimited estimate decoding is included with the yearly or monthly plan. Checkout is
+                test mode; nothing is charged.
+              </p>
+              <Button asChild variant="primary" size="lg">
+                <Link to="/results">See upgrade options</Link>
+              </Button>
             </Card>
           )}
-          {otherDecodeError && <ErrorState title="The estimate didn't decode" error={decode.error} onRetry={() => submit()} />}
+          {otherDecodeError && (
+            <ErrorState
+              title="The estimate didn't decode"
+              error={decode.error}
+              onRetry={() => submit()}
+            />
+          )}
         </section>
       </div>
 
-      <p className="mt-7 text-center text-sm font-bold">This is cost information, not veterinary advice.</p>
+      <p className="mt-7 text-center text-sm font-bold">
+        This is cost information, not veterinary advice.
+      </p>
 
       {decode.data && (
         <AddExpenseDialog

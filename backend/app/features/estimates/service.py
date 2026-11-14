@@ -1,9 +1,17 @@
 import json
+import uuid
 from collections import Counter
 from decimal import Decimal
+from typing import cast
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.errors import PaymentRequiredError, UnprocessableError
 from app.core.llm import AnthropicJsonClient, LLMError
+from app.core.reference_data import PriceRow, get_reference_data
+from app.features.estimates import repository
 from app.features.estimates.matcher import match_price
+from app.features.estimates.models import Decode
 from app.features.estimates.parser import parse_estimate_lines
 from app.features.estimates.prompts import EXPLANATION_SYSTEM_PROMPT, EXTRACTION_SYSTEM_PROMPT
 from app.features.estimates.schemas import (
@@ -14,17 +22,22 @@ from app.features.estimates.schemas import (
     ExtractedItem,
     ExtractionResponse,
     PriceRange,
-    PriceReference,
     Species,
     Verdict,
 )
+from app.features.pets import service as pets_service
+from app.features.users.models import User
+from app.features.users.service import FREE_DECODE_LIMIT
 
 
-class NoPricesFoundError(ValueError):
-    code = "NO_PRICES_FOUND"
+class NoPricesFoundError(UnprocessableError):
+    def __init__(self) -> None:
+        super().__init__(
+            "We couldn't find any priced lines in that estimate.", code="NO_PRICES_FOUND"
+        )
 
 
-def verdict_for(charged: Decimal, price: PriceReference | None) -> Verdict:
+def verdict_for(charged: Decimal, price: PriceRow | None) -> Verdict:
     if price is None:
         return "unknown"
     if charged > price.high:
@@ -38,12 +51,12 @@ async def decode_estimate(
     *,
     text: str,
     species: Species,
-    prices: list[PriceReference],
+    prices: list[PriceRow] | tuple[PriceRow, ...],
     llm: AnthropicJsonClient | None = None,
 ) -> DecodeResult:
     items = await _extract(text, llm)
     if not items:
-        raise NoPricesFoundError("We couldn't find any priced lines in that estimate.")
+        raise NoPricesFoundError()
 
     partial = [(item, match_price(item, prices, species)) for item in items]
     verdicts = [verdict_for(item.charged, price) for item, price in partial]
@@ -96,7 +109,7 @@ async def _extract(text: str, llm: AnthropicJsonClient | None) -> list[Extracted
 
 
 async def _explain(
-    partial: list[tuple[ExtractedItem, PriceReference | None]],
+    partial: list[tuple[ExtractedItem, PriceRow | None]],
     verdicts: list[Verdict],
     llm: AnthropicJsonClient | None,
 ) -> dict[int, tuple[str, str | None]]:
@@ -125,7 +138,7 @@ async def _explain(
 
 def _template_text(
     item: ExtractedItem,
-    price: PriceReference | None,
+    price: PriceRow | None,
     verdict: Verdict,
 ) -> tuple[str, str | None]:
     if price is None:
@@ -139,7 +152,9 @@ def _template_text(
     )
     question = None
     if verdict == "above":
-        question = "Could you explain what is included and why this price is above the reference range?"
+        question = (
+            "Could you explain what is included and why this price is above the reference range?"
+        )
     return explanation, question
 
 
@@ -149,3 +164,36 @@ def _summary(counts: DecodeCounts) -> str:
         f"Reviewed {reviewed} priced lines: {counts.within} within range, "
         f"{counts.above} above and {counts.unknown} with no reference range."
     )
+
+
+async def decode_for_user(
+    session: AsyncSession,
+    user: User,
+    pet_id: uuid.UUID,
+    text: str,
+    llm: AnthropicJsonClient | None,
+) -> DecodeResult:
+    pet = await pets_service.get_owned_pet(session, user, pet_id)
+    decode_count = await repository.count_for_user(session, user.id)
+    if user.plan == "free" and decode_count >= FREE_DECODE_LIMIT:
+        raise PaymentRequiredError(
+            "Your free estimate decode has already been used.", code="DECODE_LIMIT_REACHED"
+        )
+
+    result = await decode_estimate(
+        text=text,
+        species=cast(Species, pet.species),
+        prices=get_reference_data().prices,
+        llm=llm,
+    )
+    await repository.add(
+        session,
+        Decode(
+            user_id=user.id,
+            pet_id=pet.id,
+            total_charged=result.total_charged,
+            result=result.model_dump(mode="json"),
+        ),
+    )
+    await session.commit()
+    return result

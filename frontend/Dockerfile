@@ -2,7 +2,7 @@
 
 FROM node:22.12-alpine AS build
 WORKDIR /app
-RUN corepack enable
+RUN npm install --global corepack@0.34.5 && corepack enable
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .

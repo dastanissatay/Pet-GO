@@ -27,7 +27,10 @@ function renderPage() {
 }
 
 async function submitEstimate() {
-  await userEvent.type(screen.getByLabelText(/estimate or treatment plan text/i), "Wellness exam $89.00");
+  await userEvent.type(
+    screen.getByLabelText(/estimate or treatment plan text/i),
+    "Wellness exam $89.00",
+  );
   await userEvent.click(screen.getByRole("button", { name: /^decode estimate$/i }));
 }
 
@@ -95,7 +98,13 @@ describe("DecodePage", () => {
     server.use(
       http.post("*/api/v1/estimates/decode", () =>
         HttpResponse.json(
-          { error: { code: "DECODE_LIMIT_REACHED", message: "Free decode already used.", details: {} } },
+          {
+            error: {
+              code: "DECODE_LIMIT_REACHED",
+              message: "Free decode already used.",
+              details: {},
+            },
+          },
           { status: 402 },
         ),
       ),
@@ -105,6 +114,9 @@ describe("DecodePage", () => {
     await submitEstimate();
 
     expect(await screen.findByText(/your free decode is used/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /see upgrade options/i })).toHaveAttribute("href", "/results");
+    expect(screen.getByRole("link", { name: /see upgrade options/i })).toHaveAttribute(
+      "href",
+      "/results",
+    );
   });
 });

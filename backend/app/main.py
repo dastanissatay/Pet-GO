@@ -11,10 +11,12 @@ from app.core.db import get_engine
 from app.core.errors import register_error_handlers
 from app.core.logging import configure_logging, request_id_middleware
 from app.core.reference_data import get_reference_data
+from app.features.estimates.router import router as estimates_router
 from app.features.expenses.router import router as expenses_router
 from app.features.forecast.router import router as forecast_router
 from app.features.pets.router import router as pets_router
 from app.features.quests.router import router as quests_router
+from app.features.receipts.router import router as receipts_router
 from app.features.reference.router import router as reference_router
 from app.features.subscriptions.router import router as subscriptions_router
 from app.features.users.router import router as users_router
@@ -38,7 +40,8 @@ def build_api_v1() -> APIRouter:
     api.include_router(quests_router)
     api.include_router(expenses_router)
     api.include_router(subscriptions_router)
-    # Person 3: include the estimates and receipts routers here.
+    api.include_router(estimates_router)
+    api.include_router(receipts_router)
     return api
 
 

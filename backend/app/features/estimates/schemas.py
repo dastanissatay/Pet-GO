@@ -1,3 +1,4 @@
+import uuid
 from decimal import Decimal
 from typing import Literal
 
@@ -21,18 +22,11 @@ class ExtractionResponse(BaseModel):
     items: list[ExtractedItem]
 
 
-class PriceReference(BaseModel):
+class DecodeRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    id: str
-    name: str
-    aliases: list[str]
-    species: Literal["dog", "cat", "both"]
-    low: Decimal
-    high: Decimal
-    category: str
-    routine: bool
-    source_url: str
+    pet_id: uuid.UUID
+    text: str = Field(min_length=1, max_length=20_000)
 
 
 class PriceRange(BaseModel):

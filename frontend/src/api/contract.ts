@@ -15,13 +15,7 @@ export type Worry = "surprise" | "monthly" | "normal";
 export type Plan = "free" | "monthly" | "yearly";
 export type PaidPlan = Exclude<Plan, "free">;
 export type ExpenseCategory =
-  | "wellness"
-  | "dental"
-  | "medication"
-  | "emergency"
-  | "food"
-  | "grooming"
-  | "other";
+  "wellness" | "dental" | "medication" | "emergency" | "food" | "grooming" | "other";
 
 export interface Page<T> {
   items: T[];

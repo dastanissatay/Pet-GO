@@ -7,7 +7,9 @@ import { RouteErrorBoundary } from "@/features/system/RouteErrorBoundary";
 const LandingPage = lazy(() =>
   import("@/features/landing/LandingPage").then((m) => ({ default: m.LandingPage })),
 );
-const QuizPage = lazy(() => import("@/features/quiz/QuizPage").then((m) => ({ default: m.QuizPage })));
+const QuizPage = lazy(() =>
+  import("@/features/quiz/QuizPage").then((m) => ({ default: m.QuizPage })),
+);
 const ResultsPage = lazy(() =>
   import("@/features/results/ResultsPage").then((m) => ({ default: m.ResultsPage })),
 );

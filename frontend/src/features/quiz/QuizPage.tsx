@@ -31,8 +31,7 @@ export function QuizPage() {
   const copy = stepCopy(step.id, values);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
-  // Move focus to the new question so screen readers announce it. Text steps
-  // focus their input instead (autoFocus), so typing can start right away.
+  // Move focus to non-text questions so screen readers announce the new step.
   const hasTextInput = step.id === "name" || step.id === "zip";
   useEffect(() => {
     if (!hasTextInput) headingRef.current?.focus();
@@ -126,12 +125,20 @@ export function QuizPage() {
             }}
             className="flex min-w-0 flex-[999_1_560px] flex-col gap-7"
           >
-            <button type="button" onClick={back} className="flex items-center gap-1.5 self-start py-2 font-bold">
+            <button
+              type="button"
+              onClick={back}
+              className="flex items-center gap-1.5 self-start py-2 font-bold"
+            >
               <ChevronLeft className="h-5 w-5" strokeWidth={2.5} aria-hidden="true" />
               Back
             </button>
             <div className="flex flex-col gap-2.5">
-              <h1 ref={headingRef} tabIndex={-1} className="text-[36px] leading-none outline-none sm:text-[52px]">
+              <h1
+                ref={headingRef}
+                tabIndex={-1}
+                className="text-[36px] leading-none outline-none sm:text-[52px]"
+              >
                 {copy.title}
               </h1>
               {copy.hint && <p className="text-lg text-muted">{copy.hint}</p>}
