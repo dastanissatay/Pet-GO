@@ -17,9 +17,8 @@ const DashboardPage = lazy(() =>
 const ForecastPage = lazy(() =>
   import("@/features/forecast/ForecastPage").then((m) => ({ default: m.ForecastPage })),
 );
-// Person 3 owns features/decode. Swap this import for their DecodePage when it lands.
 const DecodePage = lazy(() =>
-  import("@/features/system/DecodeComingSoon").then((m) => ({ default: m.DecodeComingSoon })),
+  import("@/features/decode/DecodePage").then((m) => ({ default: m.DecodePage })),
 );
 const NotFoundPage = lazy(() =>
   import("@/features/system/NotFoundPage").then((m) => ({ default: m.NotFoundPage })),

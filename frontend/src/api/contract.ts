@@ -142,3 +142,31 @@ export interface Summary {
 export interface SubscriptionCreate {
   plan: PaidPlan;
 }
+
+export type DecodeVerdict = "within" | "above" | "below" | "unknown";
+
+export interface EstimateLine {
+  raw_text: string;
+  description: string;
+  charged: MoneyValue;
+  matched_id: string | null;
+  range: { low: number; high: number } | null;
+  verdict: DecodeVerdict;
+  explanation: string;
+  question_for_vet: string | null;
+  source_url: string | null;
+}
+
+export interface DecodeCounts {
+  within: number;
+  above: number;
+  below: number;
+  unknown: number;
+}
+
+export interface DecodeResult {
+  lines: EstimateLine[];
+  total_charged: MoneyValue;
+  summary: string;
+  counts: DecodeCounts;
+}
