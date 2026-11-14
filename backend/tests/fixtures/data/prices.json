@@ -1,0 +1,72 @@
+{
+  "_note": "Test fixture. Round numbers so forecast tests can assert exact totals.",
+  "items": [
+    {
+      "id": "exam",
+      "name": "Wellness exam",
+      "aliases": ["annual exam"],
+      "species": "both",
+      "low": 50,
+      "high": 100,
+      "category": "Checkups",
+      "routine": true,
+      "source_url": "https://example.com/exam"
+    },
+    {
+      "id": "vaccines-dog",
+      "name": "Core vaccines (DHPP)",
+      "aliases": [],
+      "species": "dog",
+      "low": 100,
+      "high": 200,
+      "category": "Vaccines",
+      "routine": true,
+      "source_url": "https://example.com/vaccines-dog"
+    },
+    {
+      "id": "vaccines-cat",
+      "name": "Core vaccines (FVRCP)",
+      "aliases": [],
+      "species": "cat",
+      "low": 80,
+      "high": 120,
+      "category": "Vaccines",
+      "routine": true,
+      "source_url": "https://example.com/vaccines-cat"
+    },
+    {
+      "id": "preventive",
+      "name": "Flea and tick preventive",
+      "aliases": [],
+      "species": "both",
+      "low": 10,
+      "high": 20,
+      "category": "Parasite prevention",
+      "routine": true,
+      "times_per_year": 12,
+      "source_url": "https://example.com/preventive"
+    },
+    {
+      "id": "dental",
+      "name": "Dental cleaning",
+      "aliases": [],
+      "species": "both",
+      "low": 300,
+      "high": 600,
+      "category": "Dental",
+      "routine": true,
+      "source_url": "https://example.com/dental"
+    },
+    {
+      "id": "xray",
+      "name": "X-rays",
+      "aliases": [],
+      "species": "both",
+      "low": 150,
+      "high": 400,
+      "category": "Imaging",
+      "routine": false,
+      "source_url": "https://example.com/xray"
+    }
+  ]
+}

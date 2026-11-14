@@ -1,0 +1,60 @@
+{
+  "_placeholder": true,
+  "_note": "PLACEHOLDER: Person 3 finalizes quest titles and the 'why' copy.",
+  "items": [
+    {
+      "id": "brush-teeth",
+      "title": "Brush teeth for 1 minute",
+      "cadence": "daily",
+      "xp": 10,
+      "species": "both",
+      "related_price_id": "dental-cleaning",
+      "why": "Daily brushing slows tartar buildup, which can push back the need for a dental cleaning."
+    },
+    {
+      "id": "fresh-water",
+      "title": "Wash the bowl and refill fresh water",
+      "cadence": "daily",
+      "xp": 10,
+      "species": "both",
+      "related_price_id": null,
+      "why": "Clean water every day supports kidney and urinary health."
+    },
+    {
+      "id": "walk-20",
+      "title": "Take a 20-minute walk",
+      "cadence": "daily",
+      "xp": 10,
+      "species": "dog",
+      "related_price_id": null,
+      "why": "Regular exercise keeps weight in check, and a healthy weight lowers vet costs over a lifetime."
+    },
+    {
+      "id": "play-10",
+      "title": "Play for 10 minutes",
+      "cadence": "daily",
+      "xp": 10,
+      "species": "cat",
+      "related_price_id": null,
+      "why": "Active play keeps indoor cats at a healthy weight."
+    },
+    {
+      "id": "coat-check",
+      "title": "Check the coat for fleas and ticks",
+      "cadence": "weekly",
+      "xp": 30,
+      "species": "both",
+      "related_price_id": "flea-tick-preventive",
+      "why": "Catching fleas early is cheaper than treating an infestation in your home."
+    },
+    {
+      "id": "nail-check",
+      "title": "Check and trim nails",
+      "cadence": "weekly",
+      "xp": 30,
+      "species": "both",
+      "related_price_id": "nail-trim",
+      "why": "Trimming at home saves a grooming visit and prevents painful splits."
+    }
+  ]
+}

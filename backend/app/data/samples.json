@@ -1,0 +1,16 @@
+{
+  "_placeholder": true,
+  "_note": "PLACEHOLDER: Person 3 finalizes the sample estimate and receipt text.",
+  "pet": {
+    "name": "Biscuit",
+    "species": "dog",
+    "breed": "Golden Retriever",
+    "age_years": 4,
+    "size_class": "large",
+    "zip": "78704",
+    "insured": false,
+    "worry": "surprise"
+  },
+  "estimate_text": "Happy Paws Veterinary Clinic - Treatment Plan\nPatient: Biscuit (Canine)\n\nExam - Wellness, Canine        $72.00\nDHPP Vaccine                    $38.00\nRabies Vaccine (3 yr)           $32.00\nHeartworm Antigen Test (4Dx)    $65.00\nDental Prophylaxis w/ Anesthesia  $890.00\nPre-anesthetic Bloodwork        $185.00\nDental Radiographs (full mouth)   $240.00\nPain Medication (7 days)        $42.50\n\nEstimated total               $1,564.50",
+  "receipt_text": "Happy Paws Veterinary Clinic\n11/02/2026\nWellness exam            $72.00\nNail trim                $18.00\nTotal paid               $90.00\nVisa ending 0000"
+}

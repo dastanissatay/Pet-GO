@@ -1,0 +1,14 @@
+{
+  "pet": {
+    "name": "Biscuit",
+    "species": "dog",
+    "breed": "Golden Retriever",
+    "age_years": 4,
+    "size_class": "medium",
+    "zip": "78704",
+    "insured": false,
+    "worry": "surprise"
+  },
+  "estimate_text": "Exam $72.00",
+  "receipt_text": "Exam $72.00"
+}

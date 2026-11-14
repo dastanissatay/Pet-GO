@@ -1,0 +1,12 @@
+{
+  "_placeholder": true,
+  "_note": "PLACEHOLDER: Person 3 replaces these factors with researched values and documents their source.",
+  "species": { "dog": 1.0, "cat": 0.85 },
+  "size": { "small": 0.85, "medium": 1.0, "large": 1.25 },
+  "age_bands": [
+    { "max_age_years": 1, "multiplier": 1.1 },
+    { "max_age_years": 7, "multiplier": 1.0 },
+    { "max_age_years": 10, "multiplier": 1.2 },
+    { "max_age_years": null, "multiplier": 1.45 }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "_placeholder": true,
+  "_note": "PLACEHOLDER: prices and sources are stand-ins so dev works. Person 3 replaces every row with researched US prices and real source URLs before launch.",
+  "items": [
+    {
+      "id": "wellness-exam",
+      "name": "Wellness exam",
+      "aliases": ["annual exam", "physical exam", "office visit", "exam fee", "checkup"],
+      "species": "both",
+      "low": 60,
+      "high": 90,
+      "category": "Checkups",
+      "routine": true,
+      "source_url": "https://example.com/placeholder/wellness-exam"
+    },
+    {
+      "id": "core-vaccines-dog",
+      "name": "Core vaccines (DHPP + rabies)",
+      "aliases": ["dhpp", "distemper", "parvo", "rabies vaccine", "vaccination"],
+      "species": "dog",
+      "low": 75,
+      "high": 140,
+      "category": "Vaccines",
+      "routine": true,
+      "source_url": "https://example.com/placeholder/core-vaccines-dog"
+    },
+    {
+      "id": "core-vaccines-cat",
+      "name": "Core vaccines (FVRCP + rabies)",
+      "aliases": ["fvrcp", "feline distemper", "rabies vaccine", "vaccination"],
+      "species": "cat",
+      "low": 65,
+      "high": 120,
+      "category": "Vaccines",
+      "routine": true,
+      "source_url": "https://example.com/placeholder/core-vaccines-cat"
+    },
+    {
+      "id": "heartworm-test",
+      "name": "Heartworm test",
+      "aliases": ["heartworm antigen test", "4dx", "snap test"],
+      "species": "dog",
+      "low": 35,
+      "high": 60,
+      "category": "Parasite prevention",
+      "routine": true,
+      "source_url": "https://example.com/placeholder/heartworm-test"
+    },
+    {
+      "id": "heartworm-preventive",
+      "name": "Heartworm preventive (monthly dose)",
+      "aliases": ["heartgard", "interceptor", "heartworm prevention"],
+      "species": "dog",
+      "low": 8,
+      "high": 15,
+      "category": "Parasite prevention",
+      "routine": true,
+      "times_per_year": 12,
+      "source_url": "https://example.com/placeholder/heartworm-preventive"
+    },
+    {
+      "id": "flea-tick-preventive",
+      "name": "Flea and tick preventive (monthly dose)",
+      "aliases": ["nexgard", "bravecto", "revolution", "frontline", "flea treatment"],
+      "species": "both",
+      "low": 15,
+      "high": 25,
+      "category": "Parasite prevention",
+      "routine": true,
+      "times_per_year": 12,
+      "source_url": "https://example.com/placeholder/flea-tick-preventive"
+    },
+    {
+      "id": "fecal-test",
+      "name": "Fecal test",
+      "aliases": ["fecal exam", "stool test", "ova and parasites"],
+      "species": "both",
+      "low": 25,
+      "high": 50,
+      "category": "Lab tests",
+      "routine": true,
+      "source_url": "https://example.com/placeholder/fecal-test"
+    },
+    {
+      "id": "dental-cleaning",
+      "name": "Dental cleaning under anesthesia",
+      "aliases": ["dental prophylaxis", "teeth cleaning", "cohat", "dental"],
+      "species": "both",
+      "low": 300,
+      "high": 700,
+      "category": "Dental",
+      "routine": true,
+      "source_url": "https://example.com/placeholder/dental-cleaning"
+    },
+    {
+      "id": "cbc-chemistry",
+      "name": "Bloodwork (CBC + chemistry panel)",
+      "aliases": ["blood panel", "cbc", "chem panel", "senior bloodwork", "pre-anesthetic bloodwork"],
+      "species": "both",
+      "low": 100,
+      "high": 250,
+      "category": "Lab tests",
+      "routine": false,
+      "source_url": "https://example.com/placeholder/cbc-chemistry"
+    },
+    {
+      "id": "x-ray",
+      "name": "X-rays (2 views)",
+      "aliases": ["radiographs", "radiograph", "xray", "x-ray"],
+      "species": "both",
+      "low": 150,
+      "high": 400,
+      "category": "Imaging",
+      "routine": false,
+      "source_url": "https://example.com/placeholder/x-ray"
+    },
+    {
+      "id": "emergency-exam",
+      "name": "Emergency exam fee",
+      "aliases": ["er exam", "urgent care exam", "emergency visit"],
+      "species": "both",
+      "low": 100,
+      "high": 250,
+      "category": "Emergency",
+      "routine": false,
+      "source_url": "https://example.com/placeholder/emergency-exam"
+    },
+    {
+      "id": "nail-trim",
+      "name": "Nail trim",
+      "aliases": ["nail clip", "pedicure"],
+      "species": "both",
+      "low": 15,
+      "high": 30,
+      "category": "Grooming",
+      "routine": false,
+      "source_url": "https://example.com/placeholder/nail-trim"
+    }
+  ]
+}

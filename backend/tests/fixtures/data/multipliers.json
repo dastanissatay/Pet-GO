@@ -1,0 +1,9 @@
+{
+  "species": { "dog": 1.0, "cat": 0.5 },
+  "size": { "small": 0.5, "medium": 1.0, "large": 2.0 },
+  "age_bands": [
+    { "max_age_years": 1, "multiplier": 1.0 },
+    { "max_age_years": 7, "multiplier": 1.0 },
+    { "max_age_years": null, "multiplier": 1.5 }
+  ]
+}
