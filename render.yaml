@@ -22,15 +22,15 @@ services:
     region: frankfurt
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    # Free instances have no pre-deploy step, so migrations run right before the
-    # server starts. alembic upgrade is a no-op when the schema is already current.
-    dockerCommand: >-
-      sh -c "alembic upgrade head && exec gunicorn app.main:app
-      -k uvicorn_worker.UvicornWorker -b 0.0.0.0:$PORT --access-logfile -"
+    # The image's own start script (backend/scripts/start.sh) binds to $PORT.
     healthCheckPath: /api/health
     envVars:
       - key: ENV
         value: prod
+      # Free instances have no pre-deploy step, so the start script applies
+      # migrations first. alembic upgrade is a no-op when nothing is pending.
+      - key: RUN_MIGRATIONS
+        value: "true"
       - key: DEBUG
         value: "false"
       - key: DATABASE_URL

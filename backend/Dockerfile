@@ -25,7 +25,9 @@ COPY --from=build /opt/venv /opt/venv
 COPY alembic.ini ./
 COPY alembic ./alembic
 COPY app ./app
+COPY scripts ./scripts
 USER app
 EXPOSE 8000
-# Worker count comes from WEB_CONCURRENCY (gunicorn reads it).
-CMD ["gunicorn", "app.main:app", "-k", "uvicorn_worker.UvicornWorker", "-b", "0.0.0.0:8000", "--access-logfile", "-"]
+# gunicorn on $PORT (default 8000); workers from WEB_CONCURRENCY.
+# RUN_MIGRATIONS=true applies migrations first (see scripts/start.sh).
+CMD ["sh", "scripts/start.sh"]
