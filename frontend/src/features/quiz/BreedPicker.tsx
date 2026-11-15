@@ -32,7 +32,11 @@ export function BreedPicker({ species, value, onChange, error, errorId }: BreedP
           Search breeds
         </label>
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2" strokeWidth={2.5} aria-hidden="true" />
+          <Search
+            className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2"
+            strokeWidth={2.5}
+            aria-hidden="true"
+          />
           <Input
             id={inputId}
             type="search"
@@ -60,7 +64,8 @@ export function BreedPicker({ species, value, onChange, error, errorId }: BreedP
           </p>
         ) : items.length === 0 ? (
           <p className="rounded-button border-2 border-dashed border-ink p-4">
-            No match for "{deferred}". Keep "{query.trim() || "your answer"}" or choose Mixed / not sure.
+            No match for "{deferred}". Keep "{query.trim() || "your answer"}" or choose Mixed / not
+            sure.
           </p>
         ) : (
           <ul className="overflow-hidden rounded-[18px] border-2 border-ink bg-surface">
@@ -100,11 +105,19 @@ export function BreedPicker({ species, value, onChange, error, errorId }: BreedP
         {MIXED_BREED}
       </Button>
 
-      {query.trim() && value !== query.trim() && value !== MIXED_BREED && items.every((b) => b.name !== query.trim()) && (
-        <Button type="button" variant="link" className="self-start px-0" onClick={() => onChange(query.trim())}>
-          Use "{query.trim()}" as the breed
-        </Button>
-      )}
+      {query.trim() &&
+        value !== query.trim() &&
+        value !== MIXED_BREED &&
+        items.every((b) => b.name !== query.trim()) && (
+          <Button
+            type="button"
+            variant="link"
+            className="self-start px-0"
+            onClick={() => onChange(query.trim())}
+          >
+            Use "{query.trim()}" as the breed
+          </Button>
+        )}
 
       {error && (
         <p id={errorId} role="alert" className="text-[15px] font-bold text-error">

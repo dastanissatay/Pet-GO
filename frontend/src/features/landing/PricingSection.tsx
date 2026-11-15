@@ -19,7 +19,7 @@ const TIERS = [
     perks: [
       "Unlimited estimate decoding",
       "Month-by-month forecast",
-      "Every daily and weekly quest",
+      "Every daily, weekly and monthly quest",
       "Works out to $5.00 a month",
     ],
     cta: "Get yearly",
@@ -38,7 +38,9 @@ const TIERS = [
 export function PricingSection() {
   return (
     <section id="pricing" className="container flex scroll-mt-6 flex-col gap-8 pb-20 pt-12">
-      <h2 className="text-[36px] leading-tight sm:text-[48px]">Start free. Upgrade when it pays off.</h2>
+      <h2 className="text-[36px] leading-tight sm:text-[48px]">
+        Start free. Upgrade when it pays off.
+      </h2>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] items-stretch gap-6">
         {TIERS.map((tier) => (
           <div

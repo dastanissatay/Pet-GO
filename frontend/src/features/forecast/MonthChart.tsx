@@ -1,7 +1,20 @@
 import { formatUsd } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+] as const;
 const CHART_HEIGHT = 180;
 
 interface MonthChartProps {
@@ -38,7 +51,9 @@ export function MonthChart({ expected, spent }: MonthChartProps) {
               />
               {s > 0 && (
                 <div
-                  className={cn("absolute bottom-0 w-[70%] rounded-t-md border-2 border-b-0 border-ink bg-coral")}
+                  className={cn(
+                    "absolute bottom-0 w-[70%] rounded-t-md border-2 border-b-0 border-ink bg-coral",
+                  )}
                   style={{ height: height(s) }}
                 />
               )}
@@ -46,7 +61,10 @@ export function MonthChart({ expected, spent }: MonthChartProps) {
           );
         })}
       </div>
-      <div aria-hidden="true" className="grid grid-cols-12 gap-1.5 text-center text-[11px] font-bold sm:gap-2.5 sm:text-[13px]">
+      <div
+        aria-hidden="true"
+        className="grid grid-cols-12 gap-1.5 text-center text-[11px] font-bold sm:gap-2.5 sm:text-[13px]"
+      >
         {MONTHS.map((m) => (
           <span key={m}>{m}</span>
         ))}

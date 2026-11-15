@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { ExpenseCreate, ExpenseDraft } from "@/api/contract";
+import type { ExpenseCreate, ExpenseDraft, ExpenseRead } from "@/api/contract";
 import { EXPENSE_CATEGORIES } from "@/features/expenses/categories";
 import { formatDate, localDateIso, parseUsDate, toNumber } from "@/lib/format";
 
@@ -44,6 +44,15 @@ export function draftToForm(draft: ExpenseDraft): ExpenseFormValues {
     date: draft.spent_on ? formatDate(draft.spent_on) : formatDate(localDateIso()),
     category: draft.category,
     note: draft.note ?? "",
+  };
+}
+
+export function expenseToForm(expense: ExpenseRead): ExpenseFormValues {
+  return {
+    amount: toNumber(expense.amount).toFixed(2),
+    date: formatDate(expense.spent_on),
+    category: expense.category,
+    note: expense.note ?? "",
   };
 }
 

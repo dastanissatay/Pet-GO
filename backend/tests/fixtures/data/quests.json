@@ -34,5 +34,14 @@
         "species":  "both",
         "related_price_id":  "preventive",
         "why":  "Test quest."
+    },
+    {
+        "id":  "m-both",
+        "title":  "Monthly for both",
+        "cadence":  "monthly",
+        "xp":  50,
+        "species":  "both",
+        "related_price_id":  null,
+        "why":  "Test quest."
     }
 ]

@@ -26,8 +26,7 @@ const cardVariants = cva("border-ink", {
 });
 
 export interface CardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof cardVariants> {
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {
   as?: "div" | "section" | "article" | "aside";
 }
 

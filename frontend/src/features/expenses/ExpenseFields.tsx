@@ -17,7 +17,10 @@ export function ExpenseFields({ form }: { form: UseFormReturn<ExpenseFormValues>
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <div className="relative">
-                <span aria-hidden="true" className="money absolute left-4 top-1/2 -translate-y-1/2 text-2xl">
+                <span
+                  aria-hidden="true"
+                  className="money absolute left-4 top-1/2 -translate-y-1/2 text-2xl"
+                >
                   $
                 </span>
                 <FormControl>

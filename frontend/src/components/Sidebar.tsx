@@ -1,4 +1,4 @@
-import { BarChart3, Home, ReceiptText } from "lucide-react";
+import { FileSearch, Home, Wallet } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import type { PetRead } from "@/api/contract";
@@ -10,10 +10,11 @@ import { CheckoutDialog } from "@/features/checkout/CheckoutDialog";
 import { useProgress } from "@/features/quests/api";
 import { cn } from "@/lib/utils";
 
+// Three places: the pet, its money, and checking a new vet bill.
 const NAV = [
   { to: "/dashboard", label: "Home", icon: Home },
-  { to: "/decode", label: "Decode an estimate", icon: ReceiptText },
-  { to: "/forecast", label: "Yearly forecast", icon: BarChart3 },
+  { to: "/money", label: "Money", icon: Wallet },
+  { to: "/decode", label: "Decode an estimate", icon: FileSearch },
 ] as const;
 
 export function Sidebar({ pet }: { pet: PetRead }) {
@@ -28,7 +29,10 @@ export function Sidebar({ pet }: { pet: PetRead }) {
         <Logo />
       </div>
 
-      <nav aria-label="Main" className="-mx-1 flex gap-1.5 overflow-x-auto px-1 lg:flex-col lg:overflow-visible">
+      <nav
+        aria-label="Main"
+        className="-mx-1 flex gap-1.5 overflow-x-auto px-1 lg:flex-col lg:overflow-visible"
+      >
         {NAV.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
@@ -60,7 +64,9 @@ export function Sidebar({ pet }: { pet: PetRead }) {
       {me.data?.plan === "free" && (
         <div className="hidden flex-col gap-2.5 rounded-[18px] border-2 border-dashed border-ink bg-butter p-3.5 lg:mt-auto lg:flex">
           <p className="text-sm font-bold">Free plan</p>
-          <p className="text-[13px] leading-snug">Unlock unlimited decoding and the full forecast.</p>
+          <p className="text-[13px] leading-snug">
+            Unlock unlimited decoding and the full forecast.
+          </p>
           <Button variant="primary" size="sm" onClick={() => setCheckoutOpen(true)}>
             Upgrade · $59.99/yr
           </Button>

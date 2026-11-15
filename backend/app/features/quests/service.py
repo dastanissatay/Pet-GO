@@ -1,4 +1,7 @@
+import hashlib
+import random
 import uuid
+from collections.abc import Sequence
 from datetime import date, timedelta
 
 from sqlalchemy.exc import IntegrityError
@@ -24,12 +27,16 @@ from app.features.users.models import User
 LEVELS = ((1, 0), (2, 100), (3, 300))
 # The browser's date may differ from the server's UTC date by time zone, never more.
 MAX_LOCAL_DATE_SKEW_DAYS = 1
+# Daily quests shown per day. The rest of the daily pool rotates in on later days.
+DAILY_QUESTS_PER_DAY = 3
 
 
 def period_key(cadence: Cadence, local_date: date) -> str:
-    """'2026-11-14' for daily quests, ISO week '2026-W46' for weekly ones."""
+    """'2026-11-14' daily, ISO week '2026-W46' weekly, '2026-11' monthly."""
     if cadence == "daily":
         return local_date.isoformat()
+    if cadence == "monthly":
+        return f"{local_date.year}-{local_date.month:02d}"
     iso = local_date.isocalendar()
     return f"{iso.year}-W{iso.week:02d}"
 
@@ -76,6 +83,52 @@ def quests_for(data: ReferenceData, species: str) -> list[QuestRow]:
     return [quest for quest in data.quests if quest.species in (species, "both")]
 
 
+def _shuffled(ids: Sequence[str], seed: str, cycle: int) -> list[str]:
+    digest = hashlib.sha256(f"{seed}:{cycle}".encode()).digest()
+    order = sorted(ids)
+    # A repeatable shuffle for picking quests, not a secret: S311 does not apply.
+    rng = random.Random(int.from_bytes(digest[:8], "big"))  # noqa: S311
+    rng.shuffle(order)
+    return order
+
+
+def _cycle_order(ids: Sequence[str], seed: str, cycle: int, per_day: int, days: int) -> list[str]:
+    """The pool order for one cycle, fixed so its first day avoids the previous cycle's last day.
+
+    Only the first day and the middle days are rearranged; the last day keeps its
+    shuffled picks, so the fix for the next cycle never depends on this one's fix.
+    """
+    order = _shuffled(ids, seed, cycle)[: days * per_day]
+    previous_last = set(_shuffled(ids, seed, cycle - 1)[(days - 1) * per_day : days * per_day])
+    middle = range(per_day, (days - 1) * per_day)
+    spare = [i for i in middle if order[i] not in previous_last]
+    for first in range(per_day):
+        if order[first] in previous_last:
+            swap = spare.pop(0)
+            order[first], order[swap] = order[swap], order[first]
+    return order
+
+
+def daily_pick(
+    ids: Sequence[str], seed: str, local_date: date, per_day: int = DAILY_QUESTS_PER_DAY
+) -> set[str]:
+    """Pick today's daily quests: random-looking, stable for the day, no repeat from yesterday.
+
+    Days are grouped into cycles of len(ids) // per_day days. Each cycle shuffles the pool
+    (seeded by the pet and the cycle) and hands out per_day quests a day, so every quest
+    comes up once per cycle and no quest repeats on two days in a row.
+    """
+    if len(ids) <= per_day:
+        return set(ids)
+    days = len(ids) // per_day
+    if days < 3:
+        # Too few quests to promise no repeats; still vary them day to day.
+        return set(_shuffled(ids, seed, local_date.toordinal())[:per_day])
+    cycle, slot = divmod(local_date.toordinal(), days)
+    order = _cycle_order(ids, seed, cycle, per_day, days)
+    return set(order[slot * per_day : (slot + 1) * per_day])
+
+
 def _find_quest(data: ReferenceData, pet: Pet, quest_id: str) -> QuestRow:
     for quest in quests_for(data, pet.species):
         if quest.id == quest_id:
@@ -116,7 +169,10 @@ async def list_quests(
     check_local_date(local_date, today_utc)
     pet = await pets_service.get_owned_pet(session, user, pet_id)
     data = get_reference_data()
-    quests = quests_for(data, pet.species)
+    pool = quests_for(data, pet.species)
+    daily_ids = [quest.id for quest in pool if quest.cadence == "daily"]
+    today = daily_pick(daily_ids, str(pet.id), local_date)
+    quests = [quest for quest in pool if quest.cadence != "daily" or quest.id in today]
     keys = {period_key(quest.cadence, local_date) for quest in quests}
     done = await repository.completed_quest_ids(session, pet.id, keys)
 
@@ -134,6 +190,7 @@ async def list_quests(
     return QuestsRead(
         daily=[to_read(q) for q in quests if q.cadence == "daily"],
         weekly=[to_read(q) for q in quests if q.cadence == "weekly"],
+        monthly=[to_read(q) for q in quests if q.cadence == "monthly"],
     )
 
 

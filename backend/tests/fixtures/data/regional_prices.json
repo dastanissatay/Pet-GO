@@ -1,0 +1,49 @@
+{
+  "basis": "Test regions.",
+  "source_label": "Test RPP",
+  "source_url": "https://example.com/rpp",
+  "year": 2023,
+  "states": {
+    "TX": {
+      "name": "Texas",
+      "rpp": 100.0,
+      "vet_visit": 100.0
+    },
+    "CA": {
+      "name": "California",
+      "rpp": 120.0,
+      "vet_visit": 120.0
+    }
+  },
+  "zip3_states": [
+    [
+      "750",
+      "799",
+      "TX"
+    ],
+    [
+      "900",
+      "961",
+      "CA"
+    ]
+  ],
+  "metros": [
+    {
+      "name": "Test metro",
+      "rpp": 150.0,
+      "zip3": [
+        [
+          "902",
+          "902"
+        ]
+      ],
+      "source_url": "https://example.com/metro"
+    }
+  ],
+  "vet": {
+    "us_average_visit": 100.0,
+    "source_label": "Test vet costs",
+    "source_url": "https://example.com/vet",
+    "year": 2025
+  }
+}

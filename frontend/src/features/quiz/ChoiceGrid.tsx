@@ -36,7 +36,9 @@ export function ChoiceGrid<T extends string | boolean>({
       aria-label={label}
       aria-describedby={describedBy}
       className={cn(
-        layout === "cards" ? "grid grid-cols-2 gap-4 md:grid-cols-[repeat(auto-fit,minmax(190px,1fr))]" : "flex flex-col gap-3",
+        layout === "cards"
+          ? "grid grid-cols-2 gap-4 md:grid-cols-[repeat(auto-fit,minmax(190px,1fr))]"
+          : "flex flex-col gap-3",
       )}
     >
       {choices.map((choice) => {
@@ -52,7 +54,9 @@ export function ChoiceGrid<T extends string | boolean>({
               layout === "cards"
                 ? "min-h-[170px] flex-col items-center justify-center gap-3 p-5 text-center"
                 : "items-center gap-4 px-5 py-4",
-              selected ? "border-[3px] bg-mint shadow-hard-lg" : cn("border-2 hover:-translate-y-px", TONES[choice.tone ?? "surface"]),
+              selected
+                ? "border-[3px] bg-mint shadow-hard-lg"
+                : cn("border-2 hover:-translate-y-px", TONES[choice.tone ?? "surface"]),
             )}
           >
             {choice.visual}
@@ -60,9 +64,13 @@ export function ChoiceGrid<T extends string | boolean>({
               <span className="block font-display text-[22px] font-extrabold leading-tight sm:text-2xl">
                 {choice.label}
               </span>
-              {choice.hint && <span className="mt-1 block text-[15px] text-muted">{choice.hint}</span>}
+              {choice.hint && (
+                <span className="mt-1 block text-[15px] text-muted">{choice.hint}</span>
+              )}
             </span>
-            {selected && layout === "rows" && <Check className="h-6 w-6" strokeWidth={3} aria-hidden="true" />}
+            {selected && layout === "rows" && (
+              <Check className="h-6 w-6" strokeWidth={3} aria-hidden="true" />
+            )}
           </button>
         );
       })}

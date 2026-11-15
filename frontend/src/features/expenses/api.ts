@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { ExpenseCreate, ExpenseDraft, ExpenseRead, Page } from "@/api/contract";
+import type { ExpenseCreate, ExpenseDraft, ExpenseRead, ExpenseUpdate, Page } from "@/api/contract";
 import { api } from "@/lib/api";
 
 export const expenseKeys = {
@@ -15,14 +15,37 @@ export function useExpenses(petId: string | undefined) {
   });
 }
 
-export function useCreateExpense(petId: string) {
+/** Every expense change moves the list and the money bar. */
+function useInvalidateExpenses(petId: string) {
   const queryClient = useQueryClient();
+  return () => {
+    void queryClient.invalidateQueries({ queryKey: expenseKeys.list(petId) });
+    void queryClient.invalidateQueries({ queryKey: ["summary", petId] });
+  };
+}
+
+export function useCreateExpense(petId: string) {
+  const invalidate = useInvalidateExpenses(petId);
   return useMutation({
     mutationFn: (body: ExpenseCreate) => api.post<ExpenseRead>(`/v1/pets/${petId}/expenses`, body),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: expenseKeys.list(petId) });
-      void queryClient.invalidateQueries({ queryKey: ["summary", petId] });
-    },
+    onSuccess: invalidate,
+  });
+}
+
+export function useUpdateExpense(petId: string) {
+  const invalidate = useInvalidateExpenses(petId);
+  return useMutation({
+    mutationFn: ({ id, body }: { id: string; body: ExpenseUpdate }) =>
+      api.patch<ExpenseRead>(`/v1/pets/${petId}/expenses/${id}`, body),
+    onSuccess: invalidate,
+  });
+}
+
+export function useDeleteExpense(petId: string) {
+  const invalidate = useInvalidateExpenses(petId);
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/v1/pets/${petId}/expenses/${id}`),
+    onSuccess: invalidate,
   });
 }
 

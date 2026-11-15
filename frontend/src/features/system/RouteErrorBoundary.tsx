@@ -18,7 +18,9 @@ export function RouteErrorBoundary() {
         </div>
         <div role="alert" className="flex max-w-[520px] flex-1 basis-[360px] flex-col gap-4">
           <h1 className="text-[44px] leading-none sm:text-[52px]">Something went wrong</h1>
-          <p className="text-lg">This page hit a snag. Reloading usually fixes it, and your data is safe.</p>
+          <p className="text-lg">
+            This page hit a snag. Reloading usually fixes it, and your data is safe.
+          </p>
           <div className="flex flex-wrap items-center gap-4">
             <Button variant="primary" size="xl" onClick={() => window.location.reload()}>
               Reload the page

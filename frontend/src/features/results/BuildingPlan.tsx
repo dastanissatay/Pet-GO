@@ -63,7 +63,9 @@ export function BuildingPlan({ pet }: { pet: PetRead }) {
             );
           })}
         </ul>
-        <p className="text-sm text-muted">Prices come from US sources. Each one is linked in your plan.</p>
+        <p className="text-sm text-muted">
+          Prices come from US sources. Each one is linked in your plan.
+        </p>
       </div>
     </div>
   );

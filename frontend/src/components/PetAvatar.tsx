@@ -63,7 +63,9 @@ function Accessories({ stage }: { stage: Stage }) {
         strokeWidth={2.5}
         strokeLinejoin="round"
       />
-      {stage === 3 && <circle cx={48} cy={88} r={6} className="fill-sun stroke-ink" strokeWidth={2.5} />}
+      {stage === 3 && (
+        <circle cx={48} cy={88} r={6} className="fill-sun stroke-ink" strokeWidth={2.5} />
+      )}
     </>
   );
 }
@@ -72,10 +74,31 @@ function Dog({ stage, mood }: { stage: Stage; mood: Mood }) {
   if (stage === 1) {
     return (
       <>
-        <ellipse cx={30} cy={54} rx={8} ry={13} className="fill-fur-dark stroke-ink" strokeWidth={2.5} />
-        <ellipse cx={66} cy={54} rx={8} ry={13} className="fill-fur-dark stroke-ink" strokeWidth={2.5} />
+        <ellipse
+          cx={30}
+          cy={54}
+          rx={8}
+          ry={13}
+          className="fill-fur-dark stroke-ink"
+          strokeWidth={2.5}
+        />
+        <ellipse
+          cx={66}
+          cy={54}
+          rx={8}
+          ry={13}
+          className="fill-fur-dark stroke-ink"
+          strokeWidth={2.5}
+        />
         <circle cx={48} cy={58} r={20} className="fill-fur stroke-ink" strokeWidth={2.5} />
-        <ellipse cx={48} cy={67} rx={9} ry={7} className="fill-butter stroke-ink" strokeWidth={2.5} />
+        <ellipse
+          cx={48}
+          cy={67}
+          rx={9}
+          ry={7}
+          className="fill-butter stroke-ink"
+          strokeWidth={2.5}
+        />
         <Eyes mood={mood} y={55} left={41} right={55} />
         <ellipse cx={48} cy={63} rx={3.5} ry={2.8} className="fill-ink" />
       </>
@@ -83,10 +106,31 @@ function Dog({ stage, mood }: { stage: Stage; mood: Mood }) {
   }
   return (
     <>
-      <ellipse cx={27} cy={46} rx={10} ry={18} className="fill-fur-dark stroke-ink" strokeWidth={2.5} />
-      <ellipse cx={69} cy={46} rx={10} ry={18} className="fill-fur-dark stroke-ink" strokeWidth={2.5} />
+      <ellipse
+        cx={27}
+        cy={46}
+        rx={10}
+        ry={18}
+        className="fill-fur-dark stroke-ink"
+        strokeWidth={2.5}
+      />
+      <ellipse
+        cx={69}
+        cy={46}
+        rx={10}
+        ry={18}
+        className="fill-fur-dark stroke-ink"
+        strokeWidth={2.5}
+      />
       <circle cx={48} cy={50} r={25} className="fill-fur stroke-ink" strokeWidth={2.5} />
-      <ellipse cx={48} cy={62} rx={12} ry={9} className="fill-butter stroke-ink" strokeWidth={2.5} />
+      <ellipse
+        cx={48}
+        cy={62}
+        rx={12}
+        ry={9}
+        className="fill-butter stroke-ink"
+        strokeWidth={2.5}
+      />
       <Eyes mood={mood} y={46} left={39} right={57} />
       <ellipse cx={48} cy={57} rx={4.5} ry={3.5} className="fill-ink" />
       <Accessories stage={stage} />
@@ -98,22 +142,52 @@ function Cat({ stage, mood }: { stage: Stage; mood: Mood }) {
   if (stage === 1) {
     return (
       <>
-        <path d="M32 40l4 16h-11z" className="fill-cat-dark stroke-ink" strokeWidth={2.5} strokeLinejoin="round" />
-        <path d="M64 40l-4 16h11z" className="fill-cat-dark stroke-ink" strokeWidth={2.5} strokeLinejoin="round" />
+        <path
+          d="M32 40l4 16h-11z"
+          className="fill-cat-dark stroke-ink"
+          strokeWidth={2.5}
+          strokeLinejoin="round"
+        />
+        <path
+          d="M64 40l-4 16h11z"
+          className="fill-cat-dark stroke-ink"
+          strokeWidth={2.5}
+          strokeLinejoin="round"
+        />
         <circle cx={48} cy={62} r={20} className="fill-cat stroke-ink" strokeWidth={2.5} />
         <Eyes mood={mood} y={59} left={41} right={55} />
-        <path d="M45 66h6l-3 3z" className="fill-coral stroke-ink" strokeWidth={1.8} strokeLinejoin="round" />
+        <path
+          d="M45 66h6l-3 3z"
+          className="fill-coral stroke-ink"
+          strokeWidth={1.8}
+          strokeLinejoin="round"
+        />
         <path d="M34 66h-9M62 66h9" className="stroke-ink" strokeWidth={2} strokeLinecap="round" />
       </>
     );
   }
   return (
     <>
-      <path d="M26 24l6 24h-14z" className="fill-cat-dark stroke-ink" strokeWidth={2.5} strokeLinejoin="round" />
-      <path d="M70 24l-6 24h14z" className="fill-cat-dark stroke-ink" strokeWidth={2.5} strokeLinejoin="round" />
+      <path
+        d="M26 24l6 24h-14z"
+        className="fill-cat-dark stroke-ink"
+        strokeWidth={2.5}
+        strokeLinejoin="round"
+      />
+      <path
+        d="M70 24l-6 24h14z"
+        className="fill-cat-dark stroke-ink"
+        strokeWidth={2.5}
+        strokeLinejoin="round"
+      />
       <circle cx={48} cy={52} r={25} className="fill-cat stroke-ink" strokeWidth={2.5} />
       <Eyes mood={mood} y={48} left={39} right={57} />
-      <path d="M44 57h8l-4 4z" className="fill-coral stroke-ink" strokeWidth={2} strokeLinejoin="round" />
+      <path
+        d="M44 57h8l-4 4z"
+        className="fill-coral stroke-ink"
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
       <path d="M30 57h-12M66 57h12" className="stroke-ink" strokeWidth={2} strokeLinecap="round" />
       <Accessories stage={stage} />
     </>
@@ -121,7 +195,14 @@ function Cat({ stage, mood }: { stage: Stage; mood: Mood }) {
 }
 
 /** Original Pet&GO avatar, drawn inline so it scales and themes cleanly. */
-export function PetAvatar({ species, stage, mood = "normal", size = 120, label, className }: PetAvatarProps) {
+export function PetAvatar({
+  species,
+  stage,
+  mood = "normal",
+  size = 120,
+  label,
+  className,
+}: PetAvatarProps) {
   const text = label === undefined ? `${stageName(species, stage)} avatar` : label;
   return (
     <svg

@@ -1,7 +1,8 @@
 # Pet&GO frontend
 
 React 18 + TypeScript (strict) + Vite + React Router + TanStack Query + Tailwind + shadcn/ui
-+ react-hook-form + zod. Product spec: `docs/SPEC.md`. Engineering rules: `CLAUDE.md`.
+
+- react-hook-form + zod. Product spec: `docs/SPEC.md`. Engineering rules: `CLAUDE.md`.
 
 ## First run
 
@@ -35,13 +36,13 @@ After the first `pnpm gen-api`, switch `src/api/contract.ts` to aliases of the g
 
 ## Where things live
 
-| Path | What |
-|---|---|
-| `src/index.css`, `tailwind.config.ts` | Pet&GO tokens (butter, ink, coral, sun, mint, lilac, sky) as CSS variables |
-| `src/components/ui/` | shadcn primitives restyled for Pet&GO |
-| `src/components/` | Shared app components: `AppShell`, `Sidebar`, `PetAvatar`, `VerdictStamp`, `Chip`, `Card`, `XpBar`, `RangeBar`, `EmptyState`, `ErrorState` |
-| `src/lib/api.ts` | The only HTTP client. Adds `X-Device-Id`, normalizes errors into `ApiError` |
-| `src/lib/format.ts` | `formatUsd` (`$1,240`), `formatDate` (`MM/DD/YYYY`), local dates |
-| `src/features/<feature>/api.ts` | TanStack Query hooks and key factories |
-| `src/features/decode/` | Owned by Person 3. Replace the placeholder import in `router.tsx` when it lands |
-| `src/mocks/` | MSW handlers implementing the spec's API, for dev and tests only |
+| Path                                  | What                                                                                                                                       |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/index.css`, `tailwind.config.ts` | Pet&GO tokens (butter, ink, coral, sun, mint, lilac, sky) as CSS variables                                                                 |
+| `src/components/ui/`                  | shadcn primitives restyled for Pet&GO                                                                                                      |
+| `src/components/`                     | Shared app components: `AppShell`, `Sidebar`, `PetAvatar`, `VerdictStamp`, `Chip`, `Card`, `XpBar`, `RangeBar`, `EmptyState`, `ErrorState` |
+| `src/lib/api.ts`                      | The only HTTP client. Adds `X-Device-Id`, normalizes errors into `ApiError`                                                                |
+| `src/lib/format.ts`                   | `formatUsd` (`$1,240`), `formatDate` (`MM/DD/YYYY`), local dates                                                                           |
+| `src/features/<feature>/api.ts`       | TanStack Query hooks and key factories                                                                                                     |
+| `src/features/decode/`                | Owned by Person 3. Replace the placeholder import in `router.tsx` when it lands                                                            |
+| `src/mocks/`                          | MSW handlers implementing the spec's API, for dev and tests only                                                                           |

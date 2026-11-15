@@ -1,0 +1,90 @@
+{
+  "basis": "Dry food. Daily calories = 70 x (weight in kg)^0.75 x a life-stage factor; pounds a year from typical dry-food energy density; cost from dry-food price per pound.",
+  "price_per_lb": {
+    "low": 1.92,
+    "high": 3.4,
+    "source_label": "Rover: How much does dog food cost? (dry food, large vs small bag)",
+    "source_url": "https://www.rover.com/blog/how-much-is-dog-food/"
+  },
+  "kcal_per_kg": {
+    "low": 3500,
+    "high": 4000,
+    "source_label": "Royal Canin: Calculating the energy content of pet food",
+    "source_url": "https://academy.royalcanin.com/en/veterinary/calculating-the-energy-content-of-pet-food"
+  },
+  "energy_factors": {
+    "dog": {
+      "young": [
+        2.0,
+        3.0
+      ],
+      "adult": [
+        1.4,
+        1.8
+      ],
+      "senior": [
+        1.2,
+        1.4
+      ]
+    },
+    "cat": {
+      "young": [
+        2.0,
+        2.5
+      ],
+      "adult": [
+        1.0,
+        1.4
+      ],
+      "senior": [
+        1.0,
+        1.2
+      ]
+    },
+    "source_label": "Pet Nutrition Alliance: Calculating calories based on pet needs",
+    "source_url": "https://petnutritionalliance.org/wp-content/uploads/2023/03/MER.RER_.PNA_.pdf"
+  },
+  "young_weight_share": 0.5,
+  "dog_weights": {
+    "by_breed": {
+      "Golden Retriever": [
+        55,
+        75
+      ],
+      "Chihuahua": [
+        6,
+        6
+      ]
+    },
+    "source_label": "AKC Breed Weight Chart",
+    "source_url": "https://www.akc.org/expert-advice/nutrition/breed-weight-chart/",
+    "by_size": {
+      "small": [
+        10,
+        20
+      ],
+      "medium": [
+        20,
+        50
+      ],
+      "large": [
+        50,
+        90
+      ]
+    }
+  },
+  "cat_weights": {
+    "by_breed": {
+      "Maine Coon": [
+        10,
+        20
+      ]
+    },
+    "source_label": "PetMD: Average cat weight",
+    "source_url": "https://www.petmd.com/cat/grooming/whats-average-healthy-cat-weight",
+    "default": [
+      8,
+      12
+    ]
+  }
+}

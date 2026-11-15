@@ -10,7 +10,10 @@ export function renderWithProviders(
   { route = "/", ...options }: RenderOptions & { route?: string } = {},
 ) {
   const queryClient = createQueryClient();
-  queryClient.setDefaultOptions({ queries: { retry: false, staleTime: 0 }, mutations: { retry: false } });
+  queryClient.setDefaultOptions({
+    queries: { retry: false, staleTime: 0 },
+    mutations: { retry: false },
+  });
   return {
     queryClient,
     ...render(

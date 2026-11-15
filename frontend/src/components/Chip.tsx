@@ -22,8 +22,7 @@ const chipVariants = cva(
 );
 
 export interface ChipProps
-  extends React.HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof chipVariants> {}
+  extends React.HTMLAttributes<HTMLSpanElement>, VariantProps<typeof chipVariants> {}
 
 export function Chip({ className, tone, size, ...props }: ChipProps) {
   return <span className={cn(chipVariants({ tone, size }), className)} {...props} />;

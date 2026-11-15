@@ -21,7 +21,7 @@ QuestId = Annotated[str, Path(max_length=64)]
 
 @router.get(
     "/{pet_id}/quests",
-    summary="Today's daily quests and this week's weekly quests",
+    summary="Today's, this week's and this month's quests",
     response_model=QuestsRead,
 )
 async def list_quests(
@@ -50,7 +50,7 @@ async def read_progress(
 
 @router.post(
     "/{pet_id}/quests/{quest_id}/complete",
-    summary="Complete a quest for today or this week",
+    summary="Complete a quest for today, this week or this month",
     response_model=QuestCompleteResult,
 )
 async def complete_quest(

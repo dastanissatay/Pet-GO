@@ -1,0 +1,475 @@
+{
+  "basis": "How often each routine item happens per year by life stage, from AAHA, AAFP and CAPC guidelines. Ranges cover differences by state law, lifestyle and the vet's advice.",
+  "senior_from_years": {
+    "dog": 7,
+    "cat": 11
+  },
+  "rows": [
+    {
+      "price_id": "wellness_exam",
+      "young": [
+        3,
+        4
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        2,
+        2
+      ],
+      "why": "Puppy and kitten series visits; one exam a year for adults; every 6 months for seniors.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2023-aaha-senior-care-guidelines/",
+      "typical": {
+        "dog": 70,
+        "cat": 70
+      }
+    },
+    {
+      "price_id": "rabies_vaccine_dog",
+      "young": [
+        1,
+        1
+      ],
+      "adult": [
+        0.33,
+        1
+      ],
+      "senior": [
+        0.33,
+        1
+      ],
+      "why": "Rabies as required by law: every 1 or 3 years depending on the vaccine and state.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2022-aaha-canine-vaccination-guidelines/",
+      "typical": {
+        "dog": 35
+      }
+    },
+    {
+      "price_id": "dhpp_vaccine",
+      "young": [
+        3,
+        4
+      ],
+      "adult": [
+        0.33,
+        0.5
+      ],
+      "senior": [
+        0.33,
+        0.5
+      ],
+      "why": "Core combination vaccine: puppy series, a booster within a year, then every 3 years.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2022-aaha-canine-vaccination-guidelines/",
+      "typical": {
+        "dog": 42
+      }
+    },
+    {
+      "price_id": "leptospirosis_vaccine",
+      "young": [
+        2,
+        2
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "Core for all dogs since the 2024 AAHA update; two starting doses, then yearly.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2022-aaha-canine-vaccination-guidelines/",
+      "typical": {
+        "dog": 34
+      }
+    },
+    {
+      "price_id": "bordetella_vaccine",
+      "young": [
+        0,
+        1
+      ],
+      "adult": [
+        0,
+        1
+      ],
+      "senior": [
+        0,
+        1
+      ],
+      "why": "Lifestyle vaccine (boarding, daycare, dog parks); yearly if needed.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2022-aaha-canine-vaccination-guidelines/",
+      "typical": {
+        "dog": 39
+      }
+    },
+    {
+      "price_id": "canine_influenza_vaccine",
+      "young": [
+        0,
+        2
+      ],
+      "adult": [
+        0,
+        1
+      ],
+      "senior": [
+        0,
+        1
+      ],
+      "why": "Lifestyle vaccine; two starting doses, then yearly if needed.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2022-aaha-canine-vaccination-guidelines/",
+      "typical": {
+        "dog": 53
+      }
+    },
+    {
+      "price_id": "lyme_vaccine",
+      "young": [
+        0,
+        2
+      ],
+      "adult": [
+        0,
+        1
+      ],
+      "senior": [
+        0,
+        1
+      ],
+      "why": "Lifestyle vaccine where ticks carry Lyme disease; yearly if needed.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2022-aaha-canine-vaccination-guidelines/"
+    },
+    {
+      "price_id": "rabies_vaccine_cat",
+      "young": [
+        1,
+        1
+      ],
+      "adult": [
+        0.33,
+        1
+      ],
+      "senior": [
+        0.33,
+        1
+      ],
+      "why": "Rabies as required by law: every 1 or 3 years depending on the vaccine and state.",
+      "source_url": "https://www.aaha.org/resources/2020-aahaaafp-feline-vaccination-guidelines/core-vaccines-for-pet-cats/",
+      "typical": {
+        "cat": 31
+      }
+    },
+    {
+      "price_id": "fvrcp_vaccine",
+      "young": [
+        3,
+        4
+      ],
+      "adult": [
+        0.33,
+        0.33
+      ],
+      "senior": [
+        0.33,
+        0.33
+      ],
+      "why": "Core cat vaccine: kitten series, then every 3 years.",
+      "source_url": "https://www.aaha.org/resources/2020-aahaaafp-feline-vaccination-guidelines/core-vaccines-for-pet-cats/",
+      "typical": {
+        "cat": 34
+      }
+    },
+    {
+      "price_id": "felv_vaccine",
+      "young": [
+        2,
+        2
+      ],
+      "adult": [
+        0,
+        1
+      ],
+      "senior": [
+        0,
+        0.5
+      ],
+      "why": "Core for kittens; for adults only with outdoor access or FeLV-positive housemates.",
+      "source_url": "https://www.aaha.org/resources/2020-aahaaafp-feline-vaccination-guidelines/core-vaccines-for-pet-cats/",
+      "typical": {
+        "cat": 33
+      }
+    },
+    {
+      "price_id": "heartworm_test",
+      "young": [
+        0,
+        1
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "Yearly heartworm test for all dogs, even on prevention.",
+      "source_url": "https://capcvet.org/guidelines/heartworm/",
+      "typical": {
+        "dog": 71
+      }
+    },
+    {
+      "price_id": "fecal_test",
+      "young": [
+        4,
+        4
+      ],
+      "adult": [
+        2,
+        2
+      ],
+      "senior": [
+        2,
+        2
+      ],
+      "why": "At least four checks in the first year and two a year for adults.",
+      "source_url": "https://capcvet.org/guidelines/general-guidelines/",
+      "typical": {
+        "dog": 58,
+        "cat": 29
+      }
+    },
+    {
+      "price_id": "flea_tick_prevention_year_dog",
+      "young": [
+        1,
+        1
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "Year-round flea and tick prevention.",
+      "source_url": "https://capcvet.org/guidelines/general-guidelines/",
+      "typical": {
+        "dog": 432
+      }
+    },
+    {
+      "price_id": "flea_tick_prevention_year_cat",
+      "young": [
+        1,
+        1
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "Year-round flea and tick prevention.",
+      "source_url": "https://capcvet.org/guidelines/general-guidelines/",
+      "typical": {
+        "cat": 348
+      }
+    },
+    {
+      "price_id": "heartworm_prevention_year",
+      "young": [
+        1,
+        1
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "Year-round heartworm prevention for dogs.",
+      "source_url": "https://capcvet.org/guidelines/heartworm/",
+      "typical": {
+        "dog": 276
+      }
+    },
+    {
+      "price_id": "wellness_bloodwork",
+      "young": [
+        0,
+        1
+      ],
+      "adult": [
+        0,
+        1
+      ],
+      "senior": [
+        1,
+        2
+      ],
+      "why": "Optional for young adults; every 6 to 12 months for seniors.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2023-aaha-senior-care-guidelines/",
+      "typical": {
+        "dog": 268
+      }
+    },
+    {
+      "price_id": "dental_cleaning_dog",
+      "young": [
+        0,
+        0
+      ],
+      "adult": [
+        0.5,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "Cleaning under anesthesia every 1 to 2 years from about age 1 to 2; yearly for seniors.",
+      "source_url": "https://vetmedbiosci.colostate.edu/vth/animal-health/keeping-your-pets-teeth-clean-is-important-to-their-overall-health/",
+      "typical": {
+        "dog": 379
+      }
+    },
+    {
+      "price_id": "dental_cleaning_cat",
+      "young": [
+        0,
+        0
+      ],
+      "adult": [
+        0.5,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "Cleaning under anesthesia every 1 to 2 years from age 1; yearly for seniors.",
+      "source_url": "https://vetmedbiosci.colostate.edu/vth/animal-health/keeping-your-pets-teeth-clean-is-important-to-their-overall-health/",
+      "typical": {
+        "cat": 395
+      }
+    },
+    {
+      "price_id": "spay_dog",
+      "young": [
+        0,
+        1
+      ],
+      "adult": [
+        0,
+        0
+      ],
+      "senior": [
+        0,
+        0
+      ],
+      "why": "One-time surgery in the first year: spay or neuter, not both.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2022-aaha-canine-vaccination-guidelines/",
+      "group": "sterilize_dog",
+      "typical": {
+        "dog": 455
+      }
+    },
+    {
+      "price_id": "neuter_dog",
+      "young": [
+        0,
+        1
+      ],
+      "adult": [
+        0,
+        0
+      ],
+      "senior": [
+        0,
+        0
+      ],
+      "why": "One-time surgery in the first year: spay or neuter, not both.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2022-aaha-canine-vaccination-guidelines/",
+      "group": "sterilize_dog",
+      "typical": {
+        "dog": 487
+      }
+    },
+    {
+      "price_id": "spay_cat",
+      "young": [
+        0,
+        1
+      ],
+      "adult": [
+        0,
+        0
+      ],
+      "senior": [
+        0,
+        0
+      ],
+      "why": "One-time surgery in the first year: spay or neuter, not both.",
+      "source_url": "https://www.aaha.org/resources/2020-aahaaafp-feline-vaccination-guidelines/core-vaccines-for-pet-cats/",
+      "group": "sterilize_cat",
+      "typical": {
+        "cat": 353
+      }
+    },
+    {
+      "price_id": "neuter_cat",
+      "young": [
+        0,
+        1
+      ],
+      "adult": [
+        0,
+        0
+      ],
+      "senior": [
+        0,
+        0
+      ],
+      "why": "One-time surgery in the first year: spay or neuter, not both.",
+      "source_url": "https://www.aaha.org/resources/2020-aahaaafp-feline-vaccination-guidelines/core-vaccines-for-pet-cats/",
+      "group": "sterilize_cat",
+      "typical": {
+        "cat": 262
+      }
+    },
+    {
+      "price_id": "microchip",
+      "young": [
+        0,
+        1
+      ],
+      "adult": [
+        0,
+        0
+      ],
+      "senior": [
+        0,
+        0
+      ],
+      "why": "One-time; many shelters chip before adoption.",
+      "source_url": "https://www.aaha.org/aaha-guidelines/2023-aaha-senior-care-guidelines/",
+      "typical": {
+        "dog": 48,
+        "cat": 48
+      }
+    }
+  ],
+  "typical_basis": "Typical price per visit or item: national averages from the 2025-2026 Synchrony Average Procedural Cost Study (CareCredit). Exam: average of the 50 states and DC. Monthly flea, tick and heartworm medicine x 12. Senior bloodwork: chemistry panel + CBC. Items the study does not list use the middle of the price range.",
+  "typical_source_url": "https://www.carecredit.com/vetmed/costs/"
+}

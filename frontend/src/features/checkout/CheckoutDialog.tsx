@@ -47,7 +47,9 @@ export function CheckoutDialog({
   function confirm() {
     subscribe.mutate(plan, {
       onSuccess: () => {
-        toast.success(`You're on the ${details.label.toLowerCase()} plan. Test mode, nothing charged.`);
+        toast.success(
+          `You're on the ${details.label.toLowerCase()} plan. Test mode, nothing charged.`,
+        );
         onOpenChange(false);
         onConfirmed?.();
       },
@@ -72,7 +74,11 @@ export function CheckoutDialog({
             <span className="font-display text-[22px] font-extrabold">
               {details.label} plan for {petName}
             </span>
-            {plan === "yearly" && <Chip tone="coral" size="sm">Save 50%</Chip>}
+            {plan === "yearly" && (
+              <Chip tone="coral" size="sm">
+                Save 50%
+              </Chip>
+            )}
           </div>
           <Row label={`${details.label} plan`} value={details.price} />
           {plan === "yearly" && <Row label="Works out to" value="$5.00 a month" muted />}

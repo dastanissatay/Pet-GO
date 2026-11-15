@@ -5,7 +5,7 @@ from pathlib import Path
 from app.core.reference_data import PriceRow
 from app.features.estimates.matcher import match_price, normalize_description
 from app.features.estimates.parser import parse_estimate_lines
-from app.features.estimates.service import verdict_for
+from app.features.estimates.service import local_range, verdict_for
 
 DATA_DIR = Path(__file__).parents[3] / "app" / "data"
 
@@ -54,3 +54,11 @@ def test_verdict_is_computed_only_from_reference_range() -> None:
     assert verdict_for(Decimal("150"), price) == "within"
     assert verdict_for(Decimal("151"), price) == "above"
     assert verdict_for(Decimal("89"), None) == "unknown"
+
+
+def test_local_range_is_a_band_around_the_typical_price() -> None:
+    extraction = next(price for price in _prices() if price.id == "tooth_extraction")
+    # No national average for this row: the geometric middle of $400-$1,800 is about $849.
+    ref = local_range(extraction, "dog", None, None)
+    assert (ref.low, ref.typical, ref.high) == (Decimal(594), Decimal(849), Decimal(1103))
+    assert verdict_for(Decimal("1200"), ref) == "above"

@@ -4,7 +4,7 @@ import type { PetRead, Quest } from "@/api/contract";
 import { ErrorState } from "@/components/ErrorState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LevelUpDialog } from "@/features/dashboard/LevelUpDialog";
-import { QuestTile } from "@/features/dashboard/QuestTile";
+import { QuestGroup } from "@/features/dashboard/QuestGroup";
 import { useCompleteQuest, useQuests, useUndoQuest } from "@/features/quests/api";
 import { errorMessage } from "@/lib/api";
 
@@ -39,53 +39,62 @@ export function QuestsSection({ pet }: { pet: PetRead }) {
     );
   }
   if (quests.isError) {
-    return <ErrorState title="Quests didn't load" error={quests.error} onRetry={() => void quests.refetch()} />;
+    return (
+      <ErrorState
+        title="Quests didn't load"
+        error={quests.error}
+        onRetry={() => void quests.refetch()}
+      />
+    );
   }
 
-  const { daily, weekly } = quests.data;
-  const pendingId = complete.isPending ? complete.variables : null;
+  const { daily, weekly, monthly } = quests.data;
+  const pendingId = complete.isPending ? (complete.variables ?? null) : null;
   const allDailyDone = daily.length > 0 && daily.every((q) => q.completed);
+  const shared = { pendingId, justDone, onComplete };
 
   return (
-    <section aria-labelledby="quests-title" className="flex flex-col gap-3">
+    <section aria-labelledby="quests-title" className="flex flex-col gap-5">
       <h2 id="quests-title" className="text-[26px]">
-        Today's quests
+        Quests
       </h2>
-      {daily.length === 0 ? (
-        <p className="rounded-[20px] border-2 border-dashed border-ink p-4">No quests today. Enjoy the day off.</p>
-      ) : (
-        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-          {daily.map((quest) => (
-            <QuestTile
-              key={quest.id}
-              quest={quest}
-              pending={pendingId === quest.id}
-              celebrate={justDone === quest.id}
-              onComplete={() => onComplete(quest)}
-            />
-          ))}
-        </div>
-      )}
-      {allDailyDone && (
-        <p className="rounded-button border-2 border-ink bg-surface px-4 py-3 text-sm font-medium">
-          All done for today. Come back tomorrow to keep the streak going.
+      {daily.length === 0 && (
+        <p className="rounded-[20px] border-2 border-dashed border-ink p-4">
+          No quests today. Enjoy the day off.
         </p>
       )}
-      {weekly.map((quest) => (
-        <QuestTile
-          key={quest.id}
-          quest={quest}
-          wide
-          pending={pendingId === quest.id}
-          celebrate={justDone === quest.id}
-          onComplete={() => onComplete(quest)}
-        />
-      ))}
-      <LevelUpDialog
-        pet={pet}
-        stage={levelUpStage}
-        onClose={() => setLevelUpStage(null)}
+      <QuestGroup
+        id="quests-today"
+        title="Today"
+        resets="Resets at midnight"
+        tone="sun"
+        quests={daily}
+        {...shared}
+        footer={
+          allDailyDone && (
+            <p className="rounded-button border-2 border-ink bg-surface px-4 py-3 text-sm font-medium">
+              All done for today. Come back tomorrow to keep the streak going.
+            </p>
+          )
+        }
       />
+      <QuestGroup
+        id="quests-week"
+        title="This week"
+        resets="Resets on Monday"
+        tone="mint"
+        quests={weekly}
+        {...shared}
+      />
+      <QuestGroup
+        id="quests-month"
+        title="This month"
+        resets="Resets on the 1st"
+        tone="lilac"
+        quests={monthly}
+        {...shared}
+      />
+      <LevelUpDialog pet={pet} stage={levelUpStage} onClose={() => setLevelUpStage(null)} />
     </section>
   );
 }

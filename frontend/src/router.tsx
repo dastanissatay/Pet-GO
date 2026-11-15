@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { AppShell } from "@/components/AppShell";
 import { RootLayout } from "@/components/RootLayout";
 import { RouteErrorBoundary } from "@/features/system/RouteErrorBoundary";
@@ -16,8 +16,8 @@ const ResultsPage = lazy(() =>
 const DashboardPage = lazy(() =>
   import("@/features/dashboard/DashboardPage").then((m) => ({ default: m.DashboardPage })),
 );
-const ForecastPage = lazy(() =>
-  import("@/features/forecast/ForecastPage").then((m) => ({ default: m.ForecastPage })),
+const MoneyPage = lazy(() =>
+  import("@/features/money/MoneyPage").then((m) => ({ default: m.MoneyPage })),
 );
 const DecodePage = lazy(() =>
   import("@/features/decode/DecodePage").then((m) => ({ default: m.DecodePage })),
@@ -38,8 +38,10 @@ export const router = createBrowserRouter([
         element: <AppShell />,
         children: [
           { path: "/dashboard", element: <DashboardPage /> },
-          { path: "/forecast", element: <ForecastPage /> },
+          { path: "/money", element: <MoneyPage /> },
           { path: "/decode", element: <DecodePage /> },
+          // The forecast used to be its own page; old links land on Money.
+          { path: "/forecast", element: <Navigate to="/money" replace /> },
         ],
       },
       { path: "*", element: <NotFoundPage /> },

@@ -1,0 +1,100 @@
+{
+  "basis": "Test schedule.",
+  "senior_from_years": {
+    "dog": 7,
+    "cat": 11
+  },
+  "rows": [
+    {
+      "price_id": "exam",
+      "young": [
+        3,
+        3
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        2,
+        2
+      ],
+      "why": "t",
+      "source_url": "https://example.com/exam",
+      "typical": {
+        "dog": 60,
+        "cat": 60
+      }
+    },
+    {
+      "price_id": "vaccines-dog",
+      "young": [
+        3,
+        3
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "t",
+      "source_url": "https://example.com/vaccines-dog"
+    },
+    {
+      "price_id": "vaccines-cat",
+      "young": [
+        3,
+        3
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "t",
+      "source_url": "https://example.com/vaccines-cat"
+    },
+    {
+      "price_id": "preventive",
+      "young": [
+        1,
+        1
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "t",
+      "source_url": "https://example.com/preventive"
+    },
+    {
+      "price_id": "dental",
+      "young": [
+        0,
+        0
+      ],
+      "adult": [
+        1,
+        1
+      ],
+      "senior": [
+        1,
+        1
+      ],
+      "why": "t",
+      "source_url": "https://example.com/dental"
+    }
+  ],
+  "typical_basis": "Test typical prices.",
+  "typical_source_url": "https://example.com/typical"
+}

@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { FileText, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/Card";
 import { Chip } from "@/components/Chip";
@@ -12,9 +12,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useMe } from "@/features/account/api";
 import { DecodeExplainer } from "@/features/decode/DecodeExplainer";
+import { DecodeHistory } from "@/features/decode/DecodeHistory";
 import { DecodeLoading } from "@/features/decode/DecodeLoading";
 import { DecodeResultPanel } from "@/features/decode/DecodeResultPanel";
-import { loadSampleEstimate, useDecodeEstimate } from "@/features/decode/api";
+import { loadSampleEstimate, useDecodeEstimate, useDecodeHistory } from "@/features/decode/api";
 import { AddExpenseDialog } from "@/features/expenses/AddExpenseDialog";
 import { isApiError } from "@/lib/api";
 import { formatDate, localDateIso, toNumber } from "@/lib/format";
@@ -29,6 +30,23 @@ export function DecodePage() {
   const [isLoadingSample, setIsLoadingSample] = useState(false);
   const [sampleError, setSampleError] = useState<unknown>(null);
   const [expenseOpen, setExpenseOpen] = useState(false);
+  const history = useDecodeHistory();
+  const [historyId, setHistoryId] = useState<string | null>(null);
+  const fromHistory = historyId
+    ? history.data?.items.find((item) => item.id === historyId)
+    : undefined;
+  const shown = fromHistory ? fromHistory.result : decode.data;
+  // Stable, so the expense dialog doesn't reset while open.
+  const expenseValues = useMemo(
+    () =>
+      shown && {
+        amount: toNumber(shown.total_charged).toFixed(2),
+        date: formatDate(localDateIso()),
+        category: "other" as const,
+        note: "Vet estimate",
+      },
+    [shown],
+  );
 
   function submit(value = text) {
     if (!value.trim()) {
@@ -37,6 +55,7 @@ export function DecodePage() {
     }
     setInputError(null);
     setSampleError(null);
+    setHistoryId(null);
     decode.mutate({ petId: pet.id, text: value });
   }
 
@@ -54,9 +73,10 @@ export function DecodePage() {
     }
   }
 
-  const noPrices = decode.isError && isApiError(decode.error, "NO_PRICES_FOUND");
-  const atLimit = decode.isError && isApiError(decode.error, "DECODE_LIMIT_REACHED");
-  const otherDecodeError = decode.isError && !noPrices && !atLimit;
+  const showDecodeError = decode.isError && !fromHistory;
+  const noPrices = showDecodeError && isApiError(decode.error, "NO_PRICES_FOUND");
+  const atLimit = showDecodeError && isApiError(decode.error, "DECODE_LIMIT_REACHED");
+  const otherDecodeError = showDecodeError && !noPrices && !atLimit;
 
   return (
     <div className="mx-auto max-w-[1280px]">
@@ -84,69 +104,77 @@ export function DecodePage() {
       </header>
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(320px,0.82fr)_minmax(0,1.18fr)]">
-        <Card as="section" variant="raised" className="lg:sticky lg:top-6">
-          <div className="mb-4 flex items-center gap-2">
-            <FileText aria-hidden="true" className="size-5" />
-            <h2 className="font-display text-2xl font-extrabold">Paste the estimate</h2>
-          </div>
-          <Label htmlFor="estimate-text">Estimate or treatment plan text</Label>
-          <Textarea
-            id="estimate-text"
-            value={text}
-            onChange={(event) => {
-              setText(event.target.value);
-              if (inputError) setInputError(null);
-            }}
-            aria-invalid={inputError !== null}
-            aria-describedby={inputError ? "estimate-error" : "estimate-help"}
-            placeholder={"Wellness exam $89.00\nDHPP vaccine $42.00\nDental cleaning $750.00"}
-            className="mt-2 min-h-[320px] resize-y font-mono text-sm"
-          />
-          {inputError ? (
-            <p id="estimate-error" role="alert" className="mt-2 text-sm font-bold text-error">
-              {inputError}
-            </p>
-          ) : (
-            <p id="estimate-help" className="mt-2 text-sm text-muted">
-              One priced service per line works best. Do not include private information.
-            </p>
-          )}
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-            <Button
-              type="button"
-              variant="primary"
-              size="lg"
-              disabled={decode.isPending || isLoadingSample}
-              onClick={() => submit()}
-            >
-              {decode.isPending ? "Decoding…" : "Decode estimate"}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              size="lg"
-              disabled={decode.isPending || isLoadingSample}
-              onClick={() => void loadSample()}
-            >
-              <Sparkles aria-hidden="true" />
-              {isLoadingSample ? "Loading sample…" : "Use sample estimate"}
-            </Button>
-          </div>
-          {sampleError !== null && (
-            <ErrorState
-              className="mt-4"
-              title="Sample didn't load"
-              error={sampleError}
-              onRetry={() => void loadSample()}
+        <div className="flex flex-col gap-6 lg:sticky lg:top-6">
+          <Card as="section" variant="raised">
+            <div className="mb-4 flex items-center gap-2">
+              <FileText aria-hidden="true" className="size-5" />
+              <h2 className="font-display text-2xl font-extrabold">Paste the estimate</h2>
+            </div>
+            <Label htmlFor="estimate-text">Estimate or treatment plan text</Label>
+            <Textarea
+              id="estimate-text"
+              value={text}
+              onChange={(event) => {
+                setText(event.target.value);
+                if (inputError) setInputError(null);
+              }}
+              aria-invalid={inputError !== null}
+              aria-describedby={inputError ? "estimate-error" : "estimate-help"}
+              placeholder={"Wellness exam $89.00\nDHPP vaccine $42.00\nDental cleaning $750.00"}
+              className="mt-2 min-h-[320px] resize-y font-mono text-sm"
             />
-          )}
-        </Card>
+            {inputError ? (
+              <p id="estimate-error" role="alert" className="mt-2 text-sm font-bold text-error">
+                {inputError}
+              </p>
+            ) : (
+              <p id="estimate-help" className="mt-2 text-sm text-muted">
+                One priced service per line works best. Do not include private information.
+              </p>
+            )}
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
+                disabled={decode.isPending || isLoadingSample}
+                onClick={() => submit()}
+              >
+                {decode.isPending ? "Decoding…" : "Decode estimate"}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="lg"
+                disabled={decode.isPending || isLoadingSample}
+                onClick={() => void loadSample()}
+              >
+                <Sparkles aria-hidden="true" />
+                {isLoadingSample ? "Loading sample…" : "Use sample estimate"}
+              </Button>
+            </div>
+            {sampleError !== null && (
+              <ErrorState
+                className="mt-4"
+                title="Sample didn't load"
+                error={sampleError}
+                onRetry={() => void loadSample()}
+              />
+            )}
+          </Card>
+          <DecodeHistory selectedId={fromHistory ? fromHistory.id : null} onSelect={setHistoryId} />
+        </div>
 
         <section aria-live="polite">
-          {!decode.data && !decode.isPending && !decode.isError && <DecodeExplainer />}
+          {!shown && !decode.isPending && !decode.isError && <DecodeExplainer />}
           {decode.isPending && <DecodeLoading />}
-          {decode.data && !decode.isPending && (
-            <DecodeResultPanel result={decode.data} onSave={() => setExpenseOpen(true)} />
+          {fromHistory && !decode.isPending && (
+            <p className="mb-3 text-sm font-bold">
+              Saved decode from {formatDate(localDateIso(new Date(fromHistory.created_at)))}
+            </p>
+          )}
+          {shown && !decode.isPending && (
+            <DecodeResultPanel result={shown} onSave={() => setExpenseOpen(true)} />
           )}
           {noPrices && (
             <EmptyState
@@ -186,17 +214,12 @@ export function DecodePage() {
         This is cost information, not veterinary advice.
       </p>
 
-      {decode.data && (
+      {expenseValues && (
         <AddExpenseDialog
           petId={pet.id}
           open={expenseOpen}
           onOpenChange={setExpenseOpen}
-          initialValues={{
-            amount: toNumber(decode.data.total_charged).toFixed(2),
-            date: formatDate(localDateIso()),
-            category: "other",
-            note: "Vet estimate",
-          }}
+          initialValues={expenseValues}
         />
       )}
     </div>

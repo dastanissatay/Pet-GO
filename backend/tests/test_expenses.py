@@ -108,8 +108,10 @@ async def test_summary_without_expenses(client: httpx.AsyncClient, pet: dict[str
     assert response.json() == {
         "spent_total": 0,
         "expected_low": 570,
+        "expected_typical": 840,
         "expected_high": 1140,
         "still_low": 570,
+        "still_typical": 840,
         "still_high": 1140,
     }
 
@@ -124,7 +126,9 @@ async def test_summary_floors_at_zero_and_ignores_last_year(
     assert response.json() == {
         "spent_total": 600.25,
         "expected_low": 570,
+        "expected_typical": 840,
         "expected_high": 1140,
         "still_low": 0,
+        "still_typical": 239.75,
         "still_high": 539.75,
     }

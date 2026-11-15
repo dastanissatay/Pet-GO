@@ -135,6 +135,8 @@ class QuestRow(_Strict):
     species: AnySpecies
     related_price_id: str | None = None
     why: str = Field(min_length=1)
+    # Where the advice in `why` comes from, when it rests on a published source.
+    source_url: str | None = None
 
 
 class BreedsFile(_Strict):

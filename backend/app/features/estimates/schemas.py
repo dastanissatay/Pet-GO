@@ -1,8 +1,11 @@
 import uuid
+from datetime import datetime
 from decimal import Decimal
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from app.core.types import Money
 
 Species = Literal["dog", "cat"]
 Verdict = Literal["within", "above", "below", "unknown"]
@@ -32,6 +35,8 @@ class DecodeRequest(BaseModel):
 class PriceRange(BaseModel):
     low: Decimal
     high: Decimal
+    # Typical local price the range is built around. None on decodes saved before it existed.
+    typical: Decimal | None = None
 
 
 class ExplanationLine(BaseModel):
@@ -72,3 +77,17 @@ class DecodeResult(BaseModel):
     total_charged: Decimal
     summary: str
     counts: DecodeCounts
+    # Where the typical prices were set for, e.g. "Texas". None on older saved decodes.
+    area: str | None = None
+
+
+class DecodeHistoryItem(BaseModel):
+    """A past decode, stored as it was returned at the time."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    pet_id: uuid.UUID | None
+    created_at: datetime
+    total_charged: Money
+    result: DecodeResult

@@ -18,6 +18,17 @@ function newId(): string {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
+/** True when this browser already has an ID, so it may have a pet. Never creates one. */
+export function hasDeviceId(): boolean {
+  if (cached) return true;
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    return stored !== null && UUID_RE.test(stored);
+  } catch {
+    return false;
+  }
+}
+
 /** Anonymous identity sent as X-Device-Id. Replaced by real auth later. */
 export function getDeviceId(): string {
   if (cached) return cached;

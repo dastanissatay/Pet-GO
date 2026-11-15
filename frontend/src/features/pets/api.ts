@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Breed, Page, PetCreate, PetRead, Samples, Species } from "@/api/contract";
+import type { Breed, Page, PetCreate, PetRead, PetUpdate, Samples, Species } from "@/api/contract";
 import { api, isApiError } from "@/lib/api";
+import { hasDeviceId } from "@/lib/device";
 
 export const petKeys = {
   all: ["pets"] as const,
@@ -18,6 +19,20 @@ export function useCurrentPet() {
   });
 }
 
+/**
+ * The pet of a returning visitor, for public pages. Null for new visitors, without
+ * creating an anonymous user for them. Later, real login replaces the device check.
+ */
+export function useReturningPet(): PetRead | null {
+  const query = useQuery({
+    queryKey: petKeys.current(),
+    queryFn: ({ signal }) => api.get<PetRead>("/v1/pets/current", undefined, signal),
+    enabled: hasDeviceId(),
+    retry: false,
+  });
+  return query.data ?? null;
+}
+
 export function useHasNoPet(query: ReturnType<typeof useCurrentPet>): boolean {
   return query.isError && isApiError(query.error, "PET_NOT_FOUND");
 }
@@ -26,7 +41,9 @@ function useOnPetCreated() {
   const queryClient = useQueryClient();
   return (pet: PetRead) => {
     // A new pet makes every pet-scoped cache stale (forecast, quests, money).
-    queryClient.removeQueries({ predicate: (q) => q.queryKey[0] !== "samples" && q.queryKey[0] !== "breeds" });
+    queryClient.removeQueries({
+      predicate: (q) => q.queryKey[0] !== "samples" && q.queryKey[0] !== "breeds",
+    });
     queryClient.setQueryData(petKeys.current(), pet);
   };
 }
@@ -36,6 +53,20 @@ export function useCreatePet() {
   return useMutation({
     mutationFn: (body: PetCreate) => api.post<PetRead>("/v1/pets", body),
     onSuccess: onCreated,
+  });
+}
+
+/** Changing age, size, ZIP or insurance changes the forecast, so pet-scoped data is refetched. */
+export function useUpdatePet(petId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: PetUpdate) => api.patch<PetRead>(`/v1/pets/${petId}`, body),
+    onSuccess: (pet) => {
+      queryClient.setQueryData(petKeys.current(), pet);
+      void queryClient.invalidateQueries({
+        predicate: (q) => !["samples", "breeds", "pets"].includes(String(q.queryKey[0])),
+      });
+    },
   });
 }
 

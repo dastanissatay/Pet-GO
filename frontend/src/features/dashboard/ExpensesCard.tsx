@@ -1,4 +1,5 @@
-import { ReceiptText } from "lucide-react";
+import { Pencil, ReceiptText, Trash2 } from "lucide-react";
+import type { ExpenseRead } from "@/api/contract";
 import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
 import { Button } from "@/components/ui/button";
@@ -12,13 +13,25 @@ interface ExpensesCardProps {
   petName: string;
   onAdd: () => void;
   onPaste: () => void;
+  onEdit: (expense: ExpenseRead) => void;
+  onDelete: (expense: ExpenseRead) => void;
 }
 
-export function ExpensesCard({ petId, petName, onAdd, onPaste }: ExpensesCardProps) {
+export function ExpensesCard({
+  petId,
+  petName,
+  onAdd,
+  onPaste,
+  onEdit,
+  onDelete,
+}: ExpensesCardProps) {
   const expenses = useExpenses(petId);
 
   return (
-    <section aria-labelledby="expenses-title" className="overflow-hidden rounded-hero border-2 border-ink bg-surface">
+    <section
+      aria-labelledby="expenses-title"
+      className="overflow-hidden rounded-hero border-2 border-ink bg-surface"
+    >
       <h2 id="expenses-title" className="border-b-2 border-ink px-6 py-4 text-[22px]">
         Expenses
       </h2>
@@ -58,19 +71,57 @@ export function ExpensesCard({ petId, petName, onAdd, onPaste }: ExpensesCardPro
           <table className="w-full border-collapse text-[15px]">
             <thead>
               <tr className="text-left text-[13px] text-muted">
-                <th scope="col" className="px-6 py-3 font-bold">Date</th>
-                <th scope="col" className="px-2 py-3 font-bold">What</th>
-                <th scope="col" className="px-6 py-3 text-right font-bold">Amount</th>
+                <th scope="col" className="px-6 py-3 font-bold">
+                  Date
+                </th>
+                <th scope="col" className="px-2 py-3 font-bold">
+                  What
+                </th>
+                <th scope="col" className="px-2 py-3 text-right font-bold">
+                  Amount
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  <span className="sr-only">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody>
-              {expenses.data.items.map((expense) => (
-                <tr key={expense.id} className="border-t border-line">
-                  <td className="whitespace-nowrap px-6 py-3.5">{formatDate(expense.spent_on)}</td>
-                  <td className="px-2 py-3.5">{expense.note || CATEGORY_LABELS[expense.category]}</td>
-                  <td className="px-6 py-3.5 text-right font-bold">{formatUsd(expense.amount)}</td>
-                </tr>
-              ))}
+              {expenses.data.items.map((expense) => {
+                const label = `${expense.note || CATEGORY_LABELS[expense.category]}, ${formatDate(expense.spent_on)}`;
+                return (
+                  <tr key={expense.id} className="border-t border-line">
+                    <td className="whitespace-nowrap px-6 py-3.5">
+                      {formatDate(expense.spent_on)}
+                    </td>
+                    <td className="px-2 py-3.5">
+                      {expense.note || CATEGORY_LABELS[expense.category]}
+                    </td>
+                    <td className="whitespace-nowrap px-2 py-3.5 text-right font-bold">
+                      {formatUsd(expense.amount)}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-2 text-right">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Edit ${label}`}
+                        onClick={() => onEdit(expense)}
+                      >
+                        <Pencil aria-hidden="true" className="size-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Delete ${label}`}
+                        onClick={() => onDelete(expense)}
+                      >
+                        <Trash2 aria-hidden="true" className="size-4" />
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

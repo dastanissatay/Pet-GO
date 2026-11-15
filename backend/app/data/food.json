@@ -1,0 +1,398 @@
+{
+  "basis": "Dry food. Daily calories = 70 x (weight in kg)^0.75 x a life-stage factor; pounds a year from typical dry-food energy density; cost from dry-food price per pound.",
+  "price_per_lb": {
+    "low": 1.92,
+    "high": 3.4,
+    "source_label": "Rover: How much does dog food cost? (dry food, large vs small bag)",
+    "source_url": "https://www.rover.com/blog/how-much-is-dog-food/"
+  },
+  "kcal_per_kg": {
+    "low": 3500,
+    "high": 4000,
+    "source_label": "Royal Canin: Calculating the energy content of pet food",
+    "source_url": "https://academy.royalcanin.com/en/veterinary/calculating-the-energy-content-of-pet-food"
+  },
+  "energy_factors": {
+    "dog": {
+      "young": [
+        2.0,
+        3.0
+      ],
+      "adult": [
+        1.4,
+        1.8
+      ],
+      "senior": [
+        1.2,
+        1.4
+      ]
+    },
+    "cat": {
+      "young": [
+        2.0,
+        2.5
+      ],
+      "adult": [
+        1.0,
+        1.4
+      ],
+      "senior": [
+        1.0,
+        1.2
+      ]
+    },
+    "source_label": "Pet Nutrition Alliance: Calculating calories based on pet needs",
+    "source_url": "https://petnutritionalliance.org/wp-content/uploads/2023/03/MER.RER_.PNA_.pdf"
+  },
+  "young_weight_share": 0.5,
+  "dog_weights": {
+    "by_breed": {
+      "Labrador Retriever": [
+        55,
+        80
+      ],
+      "French Bulldog": [
+        20,
+        28
+      ],
+      "Golden Retriever": [
+        55,
+        75
+      ],
+      "German Shepherd Dog": [
+        50,
+        90
+      ],
+      "Poodle": [
+        40,
+        70
+      ],
+      "Dachshund": [
+        11,
+        32
+      ],
+      "Beagle": [
+        20,
+        30
+      ],
+      "Rottweiler": [
+        80,
+        135
+      ],
+      "Bulldog": [
+        40,
+        50
+      ],
+      "German Shorthaired Pointer": [
+        45,
+        70
+      ],
+      "Pembroke Welsh Corgi": [
+        28,
+        30
+      ],
+      "Australian Shepherd": [
+        40,
+        65
+      ],
+      "Yorkshire Terrier": [
+        7,
+        7
+      ],
+      "Cavalier King Charles Spaniel": [
+        13,
+        18
+      ],
+      "Doberman Pinscher": [
+        60,
+        100
+      ],
+      "Cane Corso": [
+        88,
+        110
+      ],
+      "Miniature Schnauzer": [
+        11,
+        20
+      ],
+      "Boxer": [
+        50,
+        80
+      ],
+      "Great Dane": [
+        110,
+        175
+      ],
+      "Shih Tzu": [
+        9,
+        16
+      ],
+      "Bernese Mountain Dog": [
+        70,
+        115
+      ],
+      "Pomeranian": [
+        3,
+        7
+      ],
+      "Boston Terrier": [
+        12,
+        25
+      ],
+      "Havanese": [
+        7,
+        13
+      ],
+      "English Springer Spaniel": [
+        40,
+        50
+      ],
+      "Shetland Sheepdog": [
+        15,
+        25
+      ],
+      "Brittany": [
+        30,
+        40
+      ],
+      "Cocker Spaniel": [
+        20,
+        30
+      ],
+      "Border Collie": [
+        30,
+        55
+      ],
+      "Miniature American Shepherd": [
+        20,
+        40
+      ],
+      "Belgian Malinois": [
+        40,
+        80
+      ],
+      "Vizsla": [
+        44,
+        60
+      ],
+      "Chihuahua": [
+        6,
+        6
+      ],
+      "Pug": [
+        14,
+        18
+      ],
+      "Mastiff": [
+        120,
+        230
+      ],
+      "Basset Hound": [
+        40,
+        65
+      ],
+      "Newfoundland": [
+        100,
+        150
+      ],
+      "Rhodesian Ridgeback": [
+        70,
+        85
+      ],
+      "Shiba Inu": [
+        17,
+        23
+      ],
+      "West Highland White Terrier": [
+        15,
+        20
+      ],
+      "Siberian Husky": [
+        35,
+        60
+      ],
+      "Maltese": [
+        7,
+        7
+      ],
+      "Bichon Frise": [
+        12,
+        18
+      ],
+      "Collie": [
+        50,
+        75
+      ],
+      "Weimaraner": [
+        55,
+        90
+      ],
+      "Saint Bernard": [
+        120,
+        180
+      ],
+      "Akita": [
+        70,
+        130
+      ],
+      "Alaskan Malamute": [
+        75,
+        85
+      ],
+      "Great Pyrenees": [
+        85,
+        100
+      ],
+      "Australian Cattle Dog": [
+        35,
+        50
+      ],
+      "Whippet": [
+        25,
+        40
+      ],
+      "Samoyed": [
+        35,
+        65
+      ],
+      "Dalmatian": [
+        45,
+        70
+      ],
+      "Bloodhound": [
+        80,
+        110
+      ],
+      "Italian Greyhound": [
+        7,
+        14
+      ],
+      "Papillon": [
+        5,
+        10
+      ],
+      "Chinese Shar-Pei": [
+        45,
+        60
+      ],
+      "Lhasa Apso": [
+        12,
+        18
+      ],
+      "Bull Terrier": [
+        50,
+        70
+      ],
+      "Staffordshire Bull Terrier": [
+        24,
+        38
+      ],
+      "American Staffordshire Terrier": [
+        40,
+        70
+      ],
+      "Bullmastiff": [
+        100,
+        130
+      ],
+      "Airedale Terrier": [
+        50,
+        70
+      ],
+      "Russell Terrier": [
+        9,
+        15
+      ],
+      "English Cocker Spaniel": [
+        26,
+        34
+      ],
+      "Boykin Spaniel": [
+        25,
+        40
+      ],
+      "Portuguese Water Dog": [
+        35,
+        60
+      ],
+      "Cardigan Welsh Corgi": [
+        25,
+        38
+      ],
+      "Miniature Pinscher": [
+        8,
+        10
+      ]
+    },
+    "source_label": "AKC Breed Weight Chart",
+    "source_url": "https://www.akc.org/expert-advice/nutrition/breed-weight-chart/",
+    "by_size": {
+      "small": [
+        10,
+        20
+      ],
+      "medium": [
+        20,
+        50
+      ],
+      "large": [
+        50,
+        90
+      ]
+    }
+  },
+  "cat_weights": {
+    "by_breed": {
+      "Domestic Shorthair": [
+        8,
+        12
+      ],
+      "Maine Coon": [
+        10,
+        20
+      ],
+      "Persian": [
+        7,
+        14
+      ],
+      "Siamese": [
+        5,
+        12
+      ],
+      "Abyssinian": [
+        6,
+        10
+      ],
+      "Bengal": [
+        6,
+        15
+      ],
+      "Domestic Longhair": [
+        8,
+        15
+      ],
+      "American Shorthair": [
+        8,
+        15
+      ],
+      "British Shorthair": [
+        9,
+        18
+      ],
+      "Ragdoll": [
+        10,
+        20
+      ],
+      "Norwegian Forest Cat": [
+        10,
+        20
+      ]
+    },
+    "source_label": "PetMD: Average cat weight",
+    "source_url": "https://www.petmd.com/cat/grooming/whats-average-healthy-cat-weight",
+    "default": [
+      8,
+      12
+    ]
+  }
+}

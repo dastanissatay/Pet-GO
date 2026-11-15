@@ -10,7 +10,10 @@ export function DecodeLine({ line }: { line: EstimateLine }) {
         <p className="mt-1 text-sm text-muted">{line.explanation}</p>
         {line.range && (
           <p className="mt-2 text-sm font-bold">
-            Reference: {formatUsdRange(line.range.low, line.range.high)}
+            Typical: {formatUsdRange(line.range.low, line.range.high)}
+            {line.range.typical != null && (
+              <span className="font-normal"> · about {formatUsd(line.range.typical)}</span>
+            )}
             {line.source_url && (
               <a
                 className="ml-2 underline underline-offset-4"

@@ -13,7 +13,9 @@ export function XpBar({ xp, nextLevelXp, levelStartXp, className }: XpBarProps) 
   const span = nextLevelXp === null ? 1 : Math.max(1, nextLevelXp - levelStartXp);
   const filled = nextLevelXp === null ? 1 : Math.min(1, Math.max(0, (xp - levelStartXp) / span));
   const label =
-    nextLevelXp === null ? `${xp} XP, top level reached` : `${xp} of ${nextLevelXp} XP to the next level`;
+    nextLevelXp === null
+      ? `${xp} XP, top level reached`
+      : `${xp} of ${nextLevelXp} XP to the next level`;
   return (
     <div
       role="progressbar"

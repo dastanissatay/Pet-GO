@@ -9,7 +9,12 @@ export class ApiError extends Error {
   readonly code: string;
   readonly details: Record<string, unknown>;
 
-  constructor(status: number, code: string, message: string, details: Record<string, unknown> = {}) {
+  constructor(
+    status: number,
+    code: string,
+    message: string,
+    details: Record<string, unknown> = {},
+  ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
@@ -17,12 +22,25 @@ export class ApiError extends Error {
     this.details = details;
   }
 
-  /** Field errors from a 422, keyed by field name, for react-hook-form. */
+  /**
+   * Field errors from a 422, keyed by field name, for react-hook-form.
+   * The backend sends a list of `{field, message}`; a `{field: message}` map also works.
+   */
   fieldErrors(): Record<string, string> {
     const fields = this.details["fields"];
-    if (!fields || typeof fields !== "object") return {};
     const out: Record<string, string> = {};
-    for (const [key, value] of Object.entries(fields as Record<string, unknown>)) {
+    if (Array.isArray(fields)) {
+      for (const item of fields as unknown[]) {
+        if (!isRecord(item)) continue;
+        const { field, message } = item;
+        if (typeof field === "string" && typeof message === "string" && !(field in out)) {
+          out[field] = message;
+        }
+      }
+      return out;
+    }
+    if (!isRecord(fields)) return out;
+    for (const [key, value] of Object.entries(fields)) {
       if (typeof value === "string") out[key] = value;
     }
     return out;

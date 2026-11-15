@@ -7,7 +7,12 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.features.quests.models import QuestCompletion
-from app.features.quests.service import compute_streak, level_for_xp, period_key
+from app.features.quests.service import (
+    compute_streak,
+    daily_pick,
+    level_for_xp,
+    period_key,
+)
 from tests.conftest import TODAY
 
 
@@ -20,6 +25,35 @@ def test_period_keys() -> None:
     assert period_key("weekly", date(2026, 11, 14)) == "2026-W46"
     # ISO weeks cross the new year: Jan 1, 2027 belongs to week 53 of 2026.
     assert period_key("weekly", date(2027, 1, 1)) == "2026-W53"
+    assert period_key("monthly", date(2026, 11, 14)) == "2026-11"
+    assert period_key("monthly", date(2027, 1, 1)) == "2027-01"
+
+
+POOL = [f"q{n:02d}" for n in range(13)]
+
+
+def test_daily_pick_never_repeats_yesterday_and_covers_the_pool() -> None:
+    seen: set[str] = set()
+    yesterday = daily_pick(POOL, "pet-a", TODAY - timedelta(days=1))
+    for offset in range(120):
+        today = daily_pick(POOL, "pet-a", TODAY + timedelta(days=offset))
+        assert len(today) == 3
+        assert not today & yesterday
+        seen |= today
+        yesterday = today
+    assert seen == set(POOL)
+
+
+def test_daily_pick_is_stable_for_a_day_and_differs_between_pets() -> None:
+    assert daily_pick(POOL, "pet-a", TODAY) == daily_pick(POOL, "pet-a", TODAY)
+    week = [TODAY + timedelta(days=offset) for offset in range(7)]
+    a = [daily_pick(POOL, "pet-a", day) for day in week]
+    b = [daily_pick(POOL, "pet-b", day) for day in week]
+    assert a != b
+
+
+def test_daily_pick_returns_a_small_pool_whole() -> None:
+    assert daily_pick(["x", "y"], "pet-a", TODAY) == {"x", "y"}
 
 
 @pytest.mark.parametrize(
@@ -55,6 +89,7 @@ async def test_list_filters_by_species_and_shows_typical_cost(
     body = response.json()
     assert [q["id"] for q in body["daily"]] == ["d-both", "d-dog"]
     assert [q["id"] for q in body["weekly"]] == ["w-both"]
+    assert [q["id"] for q in body["monthly"]] == ["m-both"]
     assert body["daily"][0]["typical_cost"] == {
         "price_id": "exam",
         "name": "Wellness exam",
@@ -65,7 +100,7 @@ async def test_list_filters_by_species_and_shows_typical_cost(
     assert body["daily"][1]["typical_cost"] is None
     # quests.json says {name}; the API fills in the pet's name.
     assert body["daily"][0]["title"] == "Brush Biscuit's teeth"
-    assert not any(q["completed"] for q in body["daily"] + body["weekly"])
+    assert not any(q["completed"] for q in body["daily"] + body["weekly"] + body["monthly"])
 
 
 async def test_complete_quest_adds_xp_and_streak(
@@ -106,6 +141,19 @@ async def test_weekly_quest_once_per_iso_week(
     assert saturday.status_code == 200
     assert saturday.json()["progress"]["xp"] == 30
     assert sunday.status_code == 409
+
+
+async def test_monthly_quest_once_per_month(client: httpx.AsyncClient, pet: dict[str, Any]) -> None:
+    first = await client.post(_url(pet, "m-both"), json={"local_date": "2026-11-14"})
+    again = await client.post(_url(pet, "m-both"), json={"local_date": "2026-11-15"})
+    assert first.status_code == 200
+    assert first.json()["progress"]["xp"] == 50
+    assert again.status_code == 409
+
+    listing = await client.get(
+        f"/api/v1/pets/{pet['id']}/quests", params={"local_date": "2026-11-15"}
+    )
+    assert listing.json()["monthly"][0]["completed"] is True
 
 
 async def test_quest_for_other_species_is_404(

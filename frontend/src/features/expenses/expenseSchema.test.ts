@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { expenseFormSchema, toExpenseCreate, type ExpenseFormValues } from "@/features/expenses/expenseSchema";
+import {
+  expenseFormSchema,
+  toExpenseCreate,
+  type ExpenseFormValues,
+} from "@/features/expenses/expenseSchema";
 
-const valid: ExpenseFormValues = { amount: "$1,086.5", date: "10/28/2026", category: "wellness", note: " " };
+const valid: ExpenseFormValues = {
+  amount: "$1,086.5",
+  date: "10/28/2026",
+  category: "wellness",
+  note: " ",
+};
 
 describe("expenseFormSchema", () => {
   it("accepts dollar signs and commas", () => {

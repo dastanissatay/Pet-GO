@@ -28,7 +28,13 @@ export function FeatureCards() {
       <h2 className="text-[36px] leading-tight sm:text-[48px]">One app for every pet bill</h2>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6">
         {FEATURES.map((feature) => (
-          <Card key={feature.tag} as="article" variant="raised" tone={feature.tone} className="flex flex-col gap-3">
+          <Card
+            key={feature.tag}
+            as="article"
+            variant="raised"
+            tone={feature.tone}
+            className="flex flex-col gap-3"
+          >
             <Chip tone="surface" className="self-start">
               {feature.tag}
             </Chip>

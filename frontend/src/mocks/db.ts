@@ -8,12 +8,21 @@ import type {
   CompleteQuestResult,
   ExpenseCreate,
   ExpenseRead,
+  Benchmark,
+  ExpenseUpdate,
+  FoodPlan,
+  FoodPurchase,
+  FoodPurchaseCreate,
+  FoodStatus,
   Forecast,
+  InsuranceCheck,
   PetCreate,
   PetRead,
+  PetUpdate,
   Plan,
   Progress,
   Quest,
+  QuestCadence,
   QuestList,
   Samples,
   Summary,
@@ -22,7 +31,7 @@ import type {
 interface QuestDef {
   id: string;
   title: string;
-  cadence: "daily" | "weekly";
+  cadence: QuestCadence;
   xp: number;
   why: string;
   typical_cost: Quest["typical_cost"];
@@ -53,10 +62,23 @@ const QUESTS: QuestDef[] = [
     why: "Weight changes are an early warning sign.",
     typical_cost: null,
   },
+  {
+    id: "flea-tick",
+    title: "Check the flea and tick schedule",
+    cadence: "monthly",
+    xp: 50,
+    why: "Staying on schedule avoids a skin and allergy visit.",
+    typical_cost: { name: "skin and allergy visit", low: 195, high: 300 },
+  },
 ];
 
 const FORECAST_ITEMS = [
-  { category: "Wellness exam and vaccines", low: 210, high: 320, note: "One yearly checkup plus boosters." },
+  {
+    category: "Wellness exam and vaccines",
+    low: 210,
+    high: 320,
+    note: "One yearly checkup plus boosters.",
+  },
   { category: "Flea, tick and heartworm", low: 280, high: 420, note: "Year-round prevention." },
   { category: "Dental cleaning", low: 350, high: 600, note: "Most dogs need one by age 4." },
   { category: "Lab work", low: 150, high: 220, note: "Yearly blood and stool tests." },
@@ -150,18 +172,34 @@ export function createPet(user: UserState, body: PetCreate): PetRead {
 }
 
 export function forecastFor(user: UserState): Forecast {
-  const items = FORECAST_ITEMS.map((item) => ({ ...item, source_urls: ["https://example.com/mock-source"] }));
+  const items = FORECAST_ITEMS.map((item) => ({
+    ...item,
+    typical: Math.round((item.low + item.high) / 2),
+    source_urls: ["https://example.com/mock-source"],
+  }));
   const totalLow = items.reduce((sum, i) => sum + i.low, 0);
+  const totalTypical = items.reduce((sum, i) => sum + i.typical, 0);
   const totalHigh = items.reduce((sum, i) => sum + i.high, 0);
-  const mid = (totalLow + totalHigh) / 2;
-  const monthly = [0.05, 0.05, 0.2, 0.05, 0.05, 0.3, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05].map((share) =>
-    Math.round(mid * share),
+  const monthly = [0.05, 0.05, 0.2, 0.05, 0.05, 0.3, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05].map(
+    (share) => Math.round(totalTypical * share),
   );
   return {
     total_low: totalLow,
+    total_typical: totalTypical,
     total_high: totalHigh,
     items,
     monthly: user.plan === "free" ? null : monthly,
+    life_stage: "adult",
+    region: {
+      name: "US average",
+      price_level: 100,
+      source_label: "Mock price level source",
+      source_url: "https://example.com/mock-source",
+      year: 2023,
+    },
+    schedule_basis: "Mock care schedule basis.",
+    typical_basis: "Mock typical price basis.",
+    typical_source_url: "https://example.com/mock-source",
   };
 }
 
@@ -175,7 +213,9 @@ function isoWeekKey(localDate: string): string {
 }
 
 function periodKey(def: QuestDef, localDate: string): string {
-  return def.cadence === "daily" ? localDate : isoWeekKey(localDate);
+  if (def.cadence === "daily") return localDate;
+  if (def.cadence === "monthly") return localDate.slice(0, 7);
+  return isoWeekKey(localDate);
 }
 
 function previousDay(localDate: string): string {
@@ -194,7 +234,13 @@ export function progressFor(user: UserState, today: string): Progress {
     streak += 1;
     cursor = previousDay(cursor);
   }
-  return { xp, level: stage, stage, next_level_xp: stage === 1 ? 100 : stage === 2 ? 300 : null, streak };
+  return {
+    xp,
+    level: stage,
+    stage,
+    next_level_xp: stage === 1 ? 100 : stage === 2 ? 300 : null,
+    streak,
+  };
 }
 
 export function questsFor(user: UserState, localDate: string): QuestList {
@@ -213,6 +259,7 @@ export function questsFor(user: UserState, localDate: string): QuestList {
   return {
     daily: QUESTS.filter((q) => q.cadence === "daily").map(toQuest),
     weekly: QUESTS.filter((q) => q.cadence === "weekly").map(toQuest),
+    monthly: QUESTS.filter((q) => q.cadence === "monthly").map(toQuest),
   };
 }
 
@@ -224,7 +271,8 @@ export function completeQuest(
   const def = QUESTS.find((q) => q.id === questId);
   if (!def) return "not_found";
   const key = periodKey(def, localDate);
-  if (user.completions.some((c) => c.questId === questId && c.periodKey === key)) return "already_done";
+  if (user.completions.some((c) => c.questId === questId && c.periodKey === key))
+    return "already_done";
   const before = progressFor(user, localDate).stage;
   user.completions.push({ questId, periodKey: key, localDate, xp: def.xp });
   saveDb();
@@ -236,7 +284,9 @@ export function undoQuest(user: UserState, questId: string, localDate: string): 
   const def = QUESTS.find((q) => q.id === questId);
   if (!def) return;
   const key = periodKey(def, localDate);
-  user.completions = user.completions.filter((c) => !(c.questId === questId && c.periodKey === key));
+  user.completions = user.completions.filter(
+    (c) => !(c.questId === questId && c.periodKey === key),
+  );
   saveDb();
 }
 
@@ -247,14 +297,170 @@ export function addExpense(user: UserState, body: ExpenseCreate): ExpenseRead {
   return expense;
 }
 
+function sortExpenses(expenses: ExpenseRead[]): ExpenseRead[] {
+  return [...expenses].sort((a, b) => b.spent_on.localeCompare(a.spent_on));
+}
+
+export function updateExpense(
+  user: UserState,
+  expenseId: string,
+  body: ExpenseUpdate,
+): ExpenseRead | null {
+  const current = user.expenses.find((e) => e.id === expenseId);
+  if (!current) return null;
+  const updated: ExpenseRead = { ...current, ...body };
+  user.expenses = sortExpenses(user.expenses.map((e) => (e.id === expenseId ? updated : e)));
+  saveDb();
+  return updated;
+}
+
+export function deleteExpense(user: UserState, expenseId: string): boolean {
+  const before = user.expenses.length;
+  user.expenses = user.expenses.filter((e) => e.id !== expenseId);
+  saveDb();
+  return user.expenses.length < before;
+}
+
+export function updatePet(user: UserState, body: PetUpdate): PetRead | null {
+  if (!user.pet) return null;
+  user.pet = { ...user.pet, ...body };
+  if (user.pet.species === "cat") user.pet.size_class = null;
+  saveDb();
+  return user.pet;
+}
+
+/** Placeholder numbers in the real response shape. Never shown in production. */
+export function foodFor(user: UserState): FoodPlan {
+  const query = "medium breed adult dry dog food";
+  return {
+    species: user.pet?.species ?? "dog",
+    life_stage: "adult",
+    food_type: "Medium breed adult dry dog food",
+    annual_low: 876,
+    annual_typical: 960,
+    annual_high: 1059,
+    daily_kcal_low: 1100,
+    daily_kcal_high: 1400,
+    pounds_per_year_low: 230,
+    pounds_per_year_high: 310,
+    weight_basis: "medium dog, 20-50 lb",
+    basis: "Mock basis",
+    sources: [{ label: "Mock food source", url: "https://example.com/mock-source" }],
+    tip: "Mock tip",
+    shop_links: [
+      { store: "Walmart", url: `https://www.walmart.com/search?q=${encodeURIComponent(query)}` },
+      { store: "Amazon", url: `https://www.amazon.com/s?k=${encodeURIComponent(query)}` },
+    ],
+  };
+}
+
+const foodPurchases = new Map<UserState, FoodPurchase[]>();
+
+export function addFoodPurchase(user: UserState, body: FoodPurchaseCreate): FoodPurchase {
+  const purchase: FoodPurchase = {
+    id: id(),
+    bought_on: body.bought_on,
+    lasts_days: body.lasts_days,
+    expense_id: null,
+  };
+  if (body.amount !== undefined) {
+    purchase.expense_id = addExpense(user, {
+      spent_on: body.bought_on,
+      amount: body.amount,
+      category: "food",
+      note: "Dry dog food",
+    }).id;
+  }
+  foodPurchases.set(user, [...(foodPurchases.get(user) ?? []), purchase]);
+  return purchase;
+}
+
+function addDaysIso(iso: string, days: number): string {
+  const date = new Date(`${iso}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+export function foodStatusFor(user: UserState, localDate: string): FoodStatus {
+  const plan = foodFor(user);
+  const latest = (foodPurchases.get(user) ?? []).slice(-1)[0];
+  const common = { buy_ahead_days: 5, food_type: plan.food_type, shop_links: plan.shop_links };
+  if (!latest) {
+    return {
+      status: "none",
+      last_bought_on: null,
+      lasts_days: null,
+      runs_out_on: null,
+      buy_by: null,
+      days_left: null,
+      ...common,
+    };
+  }
+  const runsOut = addDaysIso(latest.bought_on, latest.lasts_days);
+  const daysLeft = Math.round(
+    (Date.parse(`${runsOut}T00:00:00Z`) - Date.parse(`${localDate}T00:00:00Z`)) / 86_400_000,
+  );
+  return {
+    status: daysLeft <= 0 ? "out" : daysLeft <= 5 ? "soon" : "ok",
+    last_bought_on: latest.bought_on,
+    lasts_days: latest.lasts_days,
+    runs_out_on: runsOut,
+    buy_by: addDaysIso(runsOut, -5),
+    days_left: daysLeft,
+    ...common,
+  };
+}
+
+/** Placeholder numbers in the real response shape. Never shown in production. */
+export function benchmarkFor(user: UserState): Benchmark {
+  const forecast = forecastFor(user);
+  return {
+    species: user.pet?.species ?? "dog",
+    us_average_vet_care: 600,
+    year: 2025,
+    source_label: "Mock benchmark source",
+    source_url: "https://example.com/mock-source",
+    forecast_low: forecast.total_low,
+    forecast_typical: forecast.total_typical,
+    forecast_high: forecast.total_high,
+    excluded_categories: [],
+  };
+}
+
+/** Placeholder numbers in the real response shape. Never shown in production. */
+export function insuranceFor(user: UserState): InsuranceCheck {
+  const forecast = forecastFor(user);
+  return {
+    species: user.pet?.species ?? "dog",
+    insured: user.pet?.insured ?? false,
+    average_annual_premium: 600,
+    average_monthly_premium: 50,
+    premium_source_label: "Mock premium source",
+    premium_source_url: "https://example.com/mock-source",
+    routine_low: forecast.total_low,
+    routine_high: forecast.total_high,
+    unexpected_costs: [
+      {
+        price_id: "mock_surgery",
+        name: "Mock surgery",
+        low: 1000,
+        high: 3000,
+        source_url: "https://example.com/mock-source",
+      },
+    ],
+  };
+}
+
 export function summaryFor(user: UserState): Summary {
   const forecast = forecastFor(user);
   const spent = user.expenses.reduce((sum, e) => sum + Number(e.amount), 0);
   return {
     spent_total: spent.toFixed(2),
     expected_low: forecast.total_low,
+    expected_typical: forecast.total_typical,
     expected_high: forecast.total_high,
     still_low: Math.max(0, forecast.total_low - spent),
+    still_typical: Math.max(0, forecast.total_typical - spent),
     still_high: Math.max(0, forecast.total_high - spent),
   };
 }

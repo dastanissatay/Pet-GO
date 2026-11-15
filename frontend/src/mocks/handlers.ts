@@ -1,17 +1,32 @@
 import { delay, http, HttpResponse } from "msw";
-import type { ExpenseCreate, PetCreate, SubscriptionCreate } from "@/api/contract";
+import type {
+  ExpenseCreate,
+  ExpenseUpdate,
+  FoodPurchaseCreate,
+  PetCreate,
+  PetUpdate,
+  SubscriptionCreate,
+} from "@/api/contract";
 import {
   addExpense,
+  addFoodPurchase,
+  benchmarkFor,
   BREEDS,
   completeQuest,
   createPet,
+  deleteExpense,
+  foodFor,
+  foodStatusFor,
   forecastFor,
+  insuranceFor,
   progressFor,
   questsFor,
   SAMPLES,
   saveDb,
   summaryFor,
   undoQuest,
+  updateExpense,
+  updatePet,
   userFor,
 } from "@/mocks/db";
 
@@ -80,6 +95,56 @@ export const handlers = [
     return pet ? HttpResponse.json(pet) : err(404, "PET_NOT_FOUND", "No pet yet.");
   }),
 
+  http.patch(`${API}/pets/:petId`, async ({ request, params }) => {
+    const found = withPet(request, params.petId);
+    if ("error" in found) return found.error;
+    const body = (await request.json()) as PetUpdate;
+    if (body.zip !== undefined && !/^\d{5}$/.test(body.zip)) {
+      return err(422, "VALIDATION_ERROR", "Some fields are invalid.", {
+        fields: [{ field: "zip", message: "Enter a 5-digit ZIP code." }],
+      });
+    }
+    return HttpResponse.json(updatePet(found.user, body));
+  }),
+
+  http.get(`${API}/pets/:petId/food`, ({ request, params }) => {
+    const found = withPet(request, params.petId);
+    if ("error" in found) return found.error;
+    return HttpResponse.json(foodFor(found.user));
+  }),
+
+  http.get(`${API}/pets/:petId/food/status`, ({ request, params }) => {
+    const found = withPet(request, params.petId);
+    if ("error" in found) return found.error;
+    const localDate = new URL(request.url).searchParams.get("local_date") ?? today();
+    return HttpResponse.json(foodStatusFor(found.user, localDate));
+  }),
+
+  http.post(`${API}/pets/:petId/food/purchases`, async ({ request, params }) => {
+    const found = withPet(request, params.petId);
+    if ("error" in found) return found.error;
+    const body = (await request.json()) as FoodPurchaseCreate;
+    return HttpResponse.json(addFoodPurchase(found.user, body), { status: 201 });
+  }),
+
+  http.get(`${API}/pets/:petId/benchmark`, ({ request, params }) => {
+    const found = withPet(request, params.petId);
+    if ("error" in found) return found.error;
+    return HttpResponse.json(benchmarkFor(found.user));
+  }),
+
+  http.get(`${API}/pets/:petId/insurance-check`, ({ request, params }) => {
+    const found = withPet(request, params.petId);
+    if ("error" in found) return found.error;
+    return HttpResponse.json(insuranceFor(found.user));
+  }),
+
+  http.get(`${API}/estimates`, ({ request }) => {
+    if (!deviceOf(request)) return err(400, "DEVICE_ID_REQUIRED", "Missing device ID.");
+    // The mock doesn't store decodes; the real API returns the user's past ones.
+    return HttpResponse.json({ items: [], total: 0 });
+  }),
+
   http.get(`${API}/pets/:petId/forecast`, async ({ request, params }) => {
     const found = withPet(request, params.petId);
     if ("error" in found) return found.error;
@@ -135,6 +200,29 @@ export const handlers = [
     if ("error" in found) return found.error;
     const body = (await request.json()) as ExpenseCreate;
     return HttpResponse.json(addExpense(found.user, body), { status: 201 });
+  }),
+
+  http.patch(`${API}/pets/:petId/expenses/:expenseId`, async ({ request, params }) => {
+    const found = withPet(request, params.petId);
+    if ("error" in found) return found.error;
+    const body = (await request.json()) as ExpenseUpdate;
+    if (body.spent_on !== undefined && body.spent_on > today()) {
+      return err(422, "VALIDATION_ERROR", "Some fields are invalid.", {
+        fields: [{ field: "spent_on", message: "The date can't be in the future." }],
+      });
+    }
+    const updated = updateExpense(found.user, String(params.expenseId), body);
+    return updated
+      ? HttpResponse.json(updated)
+      : err(404, "EXPENSE_NOT_FOUND", "We could not find that expense.");
+  }),
+
+  http.delete(`${API}/pets/:petId/expenses/:expenseId`, ({ request, params }) => {
+    const found = withPet(request, params.petId);
+    if ("error" in found) return found.error;
+    return deleteExpense(found.user, String(params.expenseId))
+      ? new HttpResponse(null, { status: 204 })
+      : err(404, "EXPENSE_NOT_FOUND", "We could not find that expense.");
   }),
 
   http.post(`${API}/receipts/parse`, async ({ request }) => {

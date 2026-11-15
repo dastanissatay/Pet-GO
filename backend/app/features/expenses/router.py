@@ -5,7 +5,7 @@ from fastapi import APIRouter, Response, status
 from app.api.deps import CurrentUser, DbSession, Pagination, UtcToday
 from app.core.schemas import Page
 from app.features.expenses import service
-from app.features.expenses.schemas import ExpenseCreate, ExpenseRead, SummaryRead
+from app.features.expenses.schemas import ExpenseCreate, ExpenseRead, ExpenseUpdate, SummaryRead
 
 router = APIRouter(prefix="/pets", tags=["expenses"])
 
@@ -34,6 +34,23 @@ async def create_expense(
     pet_id: uuid.UUID, body: ExpenseCreate, user: CurrentUser, db: DbSession, today: UtcToday
 ) -> ExpenseRead:
     expense = await service.create_expense(db, user, pet_id, body, today)
+    return ExpenseRead.model_validate(expense)
+
+
+@router.patch(
+    "/{pet_id}/expenses/{expense_id}",
+    summary="Change an expense",
+    response_model=ExpenseRead,
+)
+async def update_expense(
+    pet_id: uuid.UUID,
+    expense_id: uuid.UUID,
+    body: ExpenseUpdate,
+    user: CurrentUser,
+    db: DbSession,
+    today: UtcToday,
+) -> ExpenseRead:
+    expense = await service.update_expense(db, user, pet_id, expense_id, body, today)
     return ExpenseRead.model_validate(expense)
 
 

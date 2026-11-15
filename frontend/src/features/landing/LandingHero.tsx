@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import type { PetRead } from "@/api/contract";
 import { Chip } from "@/components/Chip";
 import { PetAvatar } from "@/components/PetAvatar";
 import { SpeechBubble } from "@/components/SpeechBubble";
@@ -6,7 +7,8 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { VerdictStamp } from "@/components/VerdictStamp";
 import { useStartSample } from "@/features/landing/useStartSample";
 
-export function LandingHero() {
+/** `pet` is set for a returning visitor, who goes straight back to their pet. */
+export function LandingHero({ pet }: { pet: PetRead | null }) {
   const sample = useStartSample();
   return (
     <section className="container flex flex-wrap items-center gap-12 pb-16 pt-12 lg:pt-[72px]">
@@ -21,15 +23,38 @@ export function LandingHero() {
           Know what your pet will cost this year, check any vet estimate line by line, and grow your
           pet with small care habits that keep bills down.
         </p>
-        <div className="flex flex-wrap gap-3.5">
-          <Link to="/quiz" className={buttonVariants({ variant: "primary", size: "xl" })}>
-            Start with my pet
-          </Link>
-          <Button variant="secondary" size="xl" onClick={sample.start} disabled={sample.isPending}>
-            {sample.isPending ? "Fetching Biscuit…" : "Try with a sample dog"}
-          </Button>
-        </div>
-        <p className="text-sm text-muted">No sign-up. About a minute. Free to start.</p>
+        {pet ? (
+          <>
+            <div className="flex flex-wrap gap-3.5">
+              <Link to="/dashboard" className={buttonVariants({ variant: "primary", size: "xl" })}>
+                Continue with {pet.name}
+              </Link>
+              <Link to="/quiz" className={buttonVariants({ variant: "secondary", size: "xl" })}>
+                Start with a new pet
+              </Link>
+            </div>
+            <p className="text-sm text-muted">
+              Welcome back. {pet.name}'s quests and money are where you left them.
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-3.5">
+              <Link to="/quiz" className={buttonVariants({ variant: "primary", size: "xl" })}>
+                Start with my pet
+              </Link>
+              <Button
+                variant="secondary"
+                size="xl"
+                onClick={sample.start}
+                disabled={sample.isPending}
+              >
+                {sample.isPending ? "Fetching Biscuit…" : "Try with a sample dog"}
+              </Button>
+            </div>
+            <p className="text-sm text-muted">No sign-up. About a minute. Free to start.</p>
+          </>
+        )}
       </div>
 
       {/* Illustration of the product, not live data. */}

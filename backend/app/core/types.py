@@ -9,7 +9,7 @@ SizeClass = Literal["small", "medium", "large"]
 Worry = Literal["surprise", "monthly", "normal"]
 Plan = Literal["free", "monthly", "yearly"]
 PaidPlan = Literal["monthly", "yearly"]
-Cadence = Literal["daily", "weekly"]
+Cadence = Literal["daily", "weekly", "monthly"]
 # Shared with the frontend (src/features/expenses/categories.ts) and the DB check.
 ExpenseCategory = Literal[
     "wellness", "dental", "medication", "emergency", "food", "grooming", "other"

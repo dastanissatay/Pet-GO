@@ -1,8 +1,8 @@
 import json
 import uuid
 from collections import Counter
-from decimal import Decimal
-from typing import cast
+from decimal import ROUND_HALF_UP, Decimal
+from typing import Protocol, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,6 +25,8 @@ from app.features.estimates.schemas import (
     Species,
     Verdict,
 )
+from app.features.forecast.care import CareSchedule, get_care_schedule
+from app.features.forecast.region import Region, get_regional_prices, region_for_zip
 from app.features.pets import service as pets_service
 from app.features.users.models import User
 from app.features.users.service import FREE_DECODE_LIMIT
@@ -37,7 +39,20 @@ class NoPricesFoundError(UnprocessableError):
         )
 
 
-def verdict_for(charged: Decimal, price: PriceRow | None) -> Verdict:
+# The reference band around the typical local price. A product choice, not a sourced
+# figure: wide enough for normal clinic-to-clinic differences, narrow enough to be useful.
+BAND_LOW = Decimal("0.7")
+BAND_HIGH = Decimal("1.3")
+
+
+class _Range(Protocol):
+    @property
+    def low(self) -> Decimal: ...
+    @property
+    def high(self) -> Decimal: ...
+
+
+def verdict_for(charged: Decimal, price: _Range | None) -> Verdict:
     if price is None:
         return "unknown"
     if charged > price.high:
@@ -47,31 +62,69 @@ def verdict_for(charged: Decimal, price: PriceRow | None) -> Verdict:
     return "within"
 
 
+def _dollars(amount: Decimal) -> Decimal:
+    return amount.quantize(Decimal(1), rounding=ROUND_HALF_UP)
+
+
+def typical_price(price: PriceRow, species: Species, schedule: CareSchedule | None) -> Decimal:
+    """National average when the data has one; otherwise the middle of the sourced range.
+
+    The geometric middle (sqrt(low x high)) is used because these ranges are skewed:
+    $400-$1,800 gives about $850, not $1,100.
+    """
+    national = schedule.typical_for(price.id, species) if schedule else None
+    if national is not None:
+        return national
+    if price.low <= 0:
+        return (price.low + price.high) / 2
+    return (price.low * price.high).sqrt()
+
+
+def local_range(
+    price: PriceRow, species: Species, schedule: CareSchedule | None, region: Region | None
+) -> PriceRange:
+    """Typical price for the pet's area, with a band of BAND_LOW-BAND_HIGH around it."""
+    factor = region.factor if region else Decimal(1)
+    typical = typical_price(price, species, schedule) * factor
+    return PriceRange(
+        low=_dollars(typical * BAND_LOW),
+        typical=_dollars(typical),
+        high=_dollars(typical * BAND_HIGH),
+    )
+
+
 async def decode_estimate(
     *,
     text: str,
     species: Species,
     prices: list[PriceRow] | tuple[PriceRow, ...],
     llm: AnthropicJsonClient | None = None,
+    schedule: CareSchedule | None = None,
+    region: Region | None = None,
 ) -> DecodeResult:
     items = await _extract(text, llm)
     if not items:
         raise NoPricesFoundError()
 
-    partial = [(item, match_price(item, prices, species)) for item in items]
-    verdicts = [verdict_for(item.charged, price) for item, price in partial]
+    matched = [(item, match_price(item, prices, species)) for item in items]
+    partial = [
+        (item, price, local_range(price, species, schedule, region) if price else None)
+        for item, price in matched
+    ]
+    verdicts = [verdict_for(item.charged, ref) for item, _, ref in partial]
     explanations = await _explain(partial, verdicts, llm)
+    area = region.name if region else None
 
     lines: list[EstimateLine] = []
-    for index, ((item, price), verdict) in enumerate(zip(partial, verdicts, strict=True)):
-        explanation, question = explanations.get(index, _template_text(item, price, verdict))
+    for index, ((item, price, ref), verdict) in enumerate(zip(partial, verdicts, strict=True)):
+        explanation, question = explanations.get(index, _template_text(ref, verdict, area))
         lines.append(
             EstimateLine(
                 raw_text=item.raw_text,
                 description=item.description,
                 charged=item.charged,
                 matched_id=price.id if price else None,
-                range=PriceRange(low=price.low, high=price.high) if price else None,
+                range=ref,
                 verdict=verdict,
                 explanation=explanation,
                 question_for_vet=question,
@@ -91,6 +144,7 @@ async def decode_estimate(
         total_charged=sum((line.charged for line in lines), start=Decimal("0")),
         counts=counts,
         summary=_summary(counts),
+        area=area,
     )
 
 
@@ -109,7 +163,7 @@ async def _extract(text: str, llm: AnthropicJsonClient | None) -> list[Extracted
 
 
 async def _explain(
-    partial: list[tuple[ExtractedItem, PriceRow | None]],
+    partial: list[tuple[ExtractedItem, PriceRow | None, PriceRange | None]],
     verdicts: list[Verdict],
     llm: AnthropicJsonClient | None,
 ) -> dict[int, tuple[str, str | None]]:
@@ -120,10 +174,10 @@ async def _explain(
             "index": index,
             "description": item.description,
             "charged": str(item.charged),
-            "range": {"low": str(price.low), "high": str(price.high)} if price else None,
+            "range": {"low": str(ref.low), "high": str(ref.high)} if ref else None,
             "verdict": verdict,
         }
-        for index, ((item, price), verdict) in enumerate(zip(partial, verdicts, strict=True))
+        for index, ((item, _, ref), verdict) in enumerate(zip(partial, verdicts, strict=True))
     ]
     try:
         response = await llm.parse_json(
@@ -137,18 +191,18 @@ async def _explain(
 
 
 def _template_text(
-    item: ExtractedItem,
-    price: PriceRow | None,
-    verdict: Verdict,
+    ref: PriceRange | None, verdict: Verdict, area: str | None
 ) -> tuple[str, str | None]:
-    if price is None:
+    if ref is None:
         return (
             "We don't have a sourced reference range for this line yet.",
             "Could you explain what is included in this fee?",
         )
     relation = {"within": "within", "above": "above", "below": "below"}[verdict]
+    where = f" in {area}" if area else ""
     explanation = (
-        f"This charge is {relation} the ${price.low:,.0f}-${price.high:,.0f} reference range."
+        f"This charge is {relation} the typical ${ref.low:,.0f}-${ref.high:,.0f}{where} "
+        f"(about ${ref.typical:,.0f} on average)."
     )
     question = None
     if verdict == "above":
@@ -185,6 +239,8 @@ async def decode_for_user(
         species=cast(Species, pet.species),
         prices=get_reference_data().prices,
         llm=llm,
+        schedule=get_care_schedule(),
+        region=region_for_zip(get_regional_prices(), pet.zip),
     )
     await repository.add(
         session,
@@ -197,3 +253,9 @@ async def decode_for_user(
     )
     await session.commit()
     return result
+
+
+async def list_decodes(
+    session: AsyncSession, user: User, limit: int, offset: int
+) -> tuple[list[Decode], int]:
+    return await repository.list_for_user(session, user.id, limit, offset)

@@ -10,7 +10,12 @@ interface ErrorStateProps {
 }
 
 /** Friendly message plus retry. Used by every data view so nothing goes blank. */
-export function ErrorState({ title = "That didn't load", error, onRetry, className }: ErrorStateProps) {
+export function ErrorState({
+  title = "That didn't load",
+  error,
+  onRetry,
+  className,
+}: ErrorStateProps) {
   return (
     <div
       role="alert"

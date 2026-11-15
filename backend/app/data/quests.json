@@ -20,8 +20,8 @@
   {
     "id": "check_ears_dog",
     "title": "Take a quick look at {name}'s ears",
-    "cadence": "daily",
-    "xp": 10,
+    "cadence": "weekly",
+    "xp": 30,
     "species": "dog",
     "related_price_id": "ear_infection_visit_dog",
     "why": "A quick check makes it easier to notice changes and ask the vet before they become a surprise visit."
@@ -29,8 +29,8 @@
   {
     "id": "check_ears_cat",
     "title": "Take a quick look at {name}'s ears",
-    "cadence": "daily",
-    "xp": 10,
+    "cadence": "weekly",
+    "xp": 30,
     "species": "cat",
     "related_price_id": "ear_infection_visit_cat",
     "why": "A quick check makes it easier to notice changes and ask the vet before they become a surprise visit."
@@ -47,8 +47,8 @@
   {
     "id": "flea_tick_dog",
     "title": "Check the flea and tick schedule",
-    "cadence": "daily",
-    "xp": 10,
+    "cadence": "monthly",
+    "xp": 50,
     "species": "dog",
     "related_price_id": "flea_tick_prevention_year_dog",
     "why": "Keeping the schedule visible helps prevent missed doses and last-minute replacement purchases."
@@ -56,8 +56,8 @@
   {
     "id": "flea_tick_cat",
     "title": "Check the flea and tick schedule",
-    "cadence": "daily",
-    "xp": 10,
+    "cadence": "monthly",
+    "xp": 50,
     "species": "cat",
     "related_price_id": "flea_tick_prevention_year_cat",
     "why": "Keeping the schedule visible helps prevent missed doses and last-minute replacement purchases."
@@ -65,8 +65,8 @@
   {
     "id": "heartworm_schedule",
     "title": "Check the heartworm prevention schedule",
-    "cadence": "daily",
-    "xp": 10,
+    "cadence": "monthly",
+    "xp": 50,
     "species": "dog",
     "related_price_id": "heartworm_prevention_year",
     "why": "A visible schedule helps avoid gaps and makes the annual prevention cost easier to budget."
@@ -92,8 +92,8 @@
   {
     "id": "review_vaccine_record_dog",
     "title": "Review {name}'s vaccine record",
-    "cadence": "weekly",
-    "xp": 30,
+    "cadence": "monthly",
+    "xp": 50,
     "species": "dog",
     "related_price_id": "dhpp_vaccine",
     "why": "Knowing what is due makes the next preventive visit easier to budget and avoids duplicate records."
@@ -101,8 +101,8 @@
   {
     "id": "review_vaccine_record_cat",
     "title": "Review {name}'s vaccine record",
-    "cadence": "weekly",
-    "xp": 30,
+    "cadence": "monthly",
+    "xp": 50,
     "species": "cat",
     "related_price_id": "fvrcp_vaccine",
     "why": "Knowing what is due makes the next preventive visit easier to budget and avoids duplicate records."
@@ -110,8 +110,8 @@
   {
     "id": "check_microchip_record",
     "title": "Confirm the microchip contact details",
-    "cadence": "weekly",
-    "xp": 30,
+    "cadence": "monthly",
+    "xp": 50,
     "species": "both",
     "related_price_id": "microchip",
     "why": "Current registration details protect the value of the microchip you already paid for."
@@ -119,10 +119,160 @@
   {
     "id": "plan_wellness_visit",
     "title": "Check when the next wellness visit is due",
-    "cadence": "weekly",
-    "xp": 30,
+    "cadence": "monthly",
+    "xp": 50,
     "species": "both",
     "related_price_id": "wellness_exam",
     "why": "Planning ahead turns a routine exam into a budget line instead of a surprise bill."
+  },
+  {
+    "id": "check_eyes",
+    "title": "Look at {name}'s eyes for redness or discharge",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "both",
+    "related_price_id": "sick_exam",
+    "why": "Red, cloudy or weepy eyes are a common reason for a sick visit. Spotting the change early lets you call the vet before it gets worse.",
+    "source_url": null
+  },
+  {
+    "id": "fresh_water",
+    "title": "Wash {name}'s water bowl and refill it",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "both",
+    "related_price_id": null,
+    "why": "Fresh water encourages drinking, and a daily wash stops slime from building up inside the bowl.",
+    "source_url": null
+  },
+  {
+    "id": "measure_food",
+    "title": "Measure {name}'s meals with a cup or kitchen scale",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "both",
+    "related_price_id": null,
+    "why": "US vets rated 59% of dogs and 61% of cats overweight or obese in 2022. Measuring every meal is one of the easiest ways to keep weight, and food spending, in check.",
+    "source_url": "https://www.petobesityprevention.org/2022"
+  },
+  {
+    "id": "handling_practice",
+    "title": "Gently touch {name}'s paws, ears and mouth, then give a treat",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "both",
+    "related_price_id": "wellness_exam",
+    "why": "AAHA suggests short, positive handling sessions at home so exams, nail trims and tooth checks feel calm instead of scary.",
+    "source_url": "https://www.aaha.org/resources/preparing-your-pet-for-a-successful-veterinary-visit/"
+  },
+  {
+    "id": "check_paws",
+    "title": "Check {name}'s paws and nails",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "both",
+    "related_price_id": null,
+    "why": "Cracked pads, stuck burrs and overgrown nails are easy to catch at home and painful if they are missed.",
+    "source_url": null
+  },
+  {
+    "id": "brush_coat",
+    "title": "Brush {name}'s coat for five minutes",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "both",
+    "related_price_id": "skin_allergy_visit",
+    "why": "Brushing removes loose hair and lets you feel for new lumps, scabs or fleas while they are still small.",
+    "source_url": null
+  },
+  {
+    "id": "sniff_walk_dog",
+    "title": "Take {name} on a 20-minute sniff walk",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "dog",
+    "related_price_id": null,
+    "why": "A walk with time to sniff burns calories and tires the brain, which helps with both weight and boredom behaviors.",
+    "source_url": null
+  },
+  {
+    "id": "puzzle_meal_dog",
+    "title": "Serve one of {name}'s meals in a puzzle toy or snuffle mat",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "dog",
+    "related_price_id": null,
+    "why": "Working for food slows down fast eaters and adds mental exercise without adding calories.",
+    "source_url": null
+  },
+  {
+    "id": "training_dog",
+    "title": "Do a 5-minute training session with {name}",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "dog",
+    "related_price_id": null,
+    "why": "AAHA recommends short, fun training sessions to keep skills fresh and build confidence for vet visits.",
+    "source_url": "https://www.aaha.org/resources/preparing-your-pet-for-a-successful-veterinary-visit/"
+  },
+  {
+    "id": "scoop_litter",
+    "title": "Scoop {name}'s litter box and look for changes",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "cat",
+    "related_price_id": "urinalysis",
+    "why": "Cat vets advise scooping at least once a day. Bigger, more or fewer clumps than usual can be an early sign of a urinary or kidney problem worth asking the vet about.",
+    "source_url": "https://www.petmd.com/cat/general-health/how-to-clean-litter-box"
+  },
+  {
+    "id": "wand_play_cat",
+    "title": "Play with {name} using a wand toy for 10 minutes",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "cat",
+    "related_price_id": null,
+    "why": "Indoor cats still need to stalk and pounce. A short daily play session burns calories and lowers stress.",
+    "source_url": null
+  },
+  {
+    "id": "puzzle_meal_cat",
+    "title": "Serve part of {name}'s food in a food puzzle",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "cat",
+    "related_price_id": null,
+    "why": "The American Association of Feline Practitioners recommends puzzle feeders and small, frequent meals to reduce boredom, begging and weight gain.",
+    "source_url": "https://catvets.com/wp-content/uploads/2024/01/How_to_Feed_Client_Brochure.pdf"
+  },
+  {
+    "id": "carrier_treat_cat",
+    "title": "Leave a treat in {name}'s carrier",
+    "cadence": "daily",
+    "xp": 10,
+    "species": "cat",
+    "related_price_id": "wellness_exam",
+    "why": "AAHA advises keeping the carrier out all the time so it stops meaning 'vet trip'. A relaxed cat makes yearly checkups much easier to keep up with.",
+    "source_url": "https://www.aaha.org/resources/helping-your-cat-cope-with-veterinary-visits/"
+  },
+  {
+    "id": "wash_bedding",
+    "title": "Wash {name}'s bed and blankets",
+    "cadence": "weekly",
+    "xp": 30,
+    "species": "both",
+    "related_price_id": null,
+    "why": "A hot wash removes hair, dander and flea eggs that collect where pets sleep.",
+    "source_url": null
+  },
+  {
+    "id": "wash_litter_box",
+    "title": "Empty and wash {name}'s litter box",
+    "cadence": "weekly",
+    "xp": 30,
+    "species": "cat",
+    "related_price_id": null,
+    "why": "Scooping leaves some waste behind. Vets suggest washing the box with mild soap every one to four weeks; a clean box helps prevent accidents around the house.",
+    "source_url": "https://www.petmd.com/cat/general-health/how-to-clean-litter-box"
   }
 ]

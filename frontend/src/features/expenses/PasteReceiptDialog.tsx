@@ -135,7 +135,10 @@ export function PasteReceiptDialog({ petId, open, onOpenChange }: PasteReceiptDi
             ) : (
               <div className="flex h-full flex-col justify-center gap-2 py-6 text-center">
                 <p className="font-display text-xl font-extrabold">Nothing read yet</p>
-                <p className="text-[15px]">Paste a receipt and press "Read receipt". You'll check every field before it's saved.</p>
+                <p className="text-[15px]">
+                  Paste a receipt and press "Read receipt". You'll check every field before it's
+                  saved.
+                </p>
               </div>
             )}
           </section>

@@ -28,6 +28,7 @@ class QuestRead(BaseModel):
 class QuestsRead(BaseModel):
     daily: list[QuestRead]
     weekly: list[QuestRead]
+    monthly: list[QuestRead]
 
 
 class ProgressRead(BaseModel):

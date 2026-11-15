@@ -19,13 +19,45 @@ export function NotFoundPage() {
             <circle cx="20" cy="74" r="4" className="fill-ink" />
             <circle cx="34" cy="70" r="4" className="fill-ink" />
             <circle cx="48" cy="74" r="4" className="fill-ink" />
-            <ellipse cx="95" cy="60" rx="34" ry="16" className="fill-fur stroke-ink" strokeWidth={2.5} />
+            <ellipse
+              cx="95"
+              cy="60"
+              rx="34"
+              ry="16"
+              className="fill-fur stroke-ink"
+              strokeWidth={2.5}
+            />
             <circle cx="62" cy="48" r="17" className="fill-fur stroke-ink" strokeWidth={2.5} />
-            <ellipse cx="66" cy="44" rx="7" ry="12" className="fill-fur-dark stroke-ink" strokeWidth={2.5} />
-            <ellipse cx="47" cy="56" rx="7" ry="5" className="fill-butter stroke-ink" strokeWidth={2.5} />
+            <ellipse
+              cx="66"
+              cy="44"
+              rx="7"
+              ry="12"
+              className="fill-fur-dark stroke-ink"
+              strokeWidth={2.5}
+            />
+            <ellipse
+              cx="47"
+              cy="56"
+              rx="7"
+              ry="5"
+              className="fill-butter stroke-ink"
+              strokeWidth={2.5}
+            />
             <circle cx="43" cy="55" r="2.5" className="fill-ink" />
-            <path d="M128 54q12-12 6-24" fill="none" className="stroke-ink" strokeWidth={3} strokeLinecap="round" />
-            <path d="M80 74v8M110 74v8" className="stroke-ink" strokeWidth={3} strokeLinecap="round" />
+            <path
+              d="M128 54q12-12 6-24"
+              fill="none"
+              className="stroke-ink"
+              strokeWidth={3}
+              strokeLinecap="round"
+            />
+            <path
+              d="M80 74v8M110 74v8"
+              className="stroke-ink"
+              strokeWidth={3}
+              strokeLinecap="round"
+            />
           </svg>
         </div>
         <div className="flex max-w-[480px] flex-1 basis-[340px] flex-col gap-4">

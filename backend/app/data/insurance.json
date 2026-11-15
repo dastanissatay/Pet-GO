@@ -1,0 +1,9 @@
+{
+  "coverage": "accident and illness",
+  "source_label": "NAPHIA State of the Industry Report 2025 (US averages, year-end 2024)",
+  "source_url": "https://naphia.org/news/naphia-news/soi-report-2025/",
+  "premiums": [
+    { "species": "dog", "annual": 749.29, "monthly": 62.44 },
+    { "species": "cat", "annual": 386.47, "monthly": 32.21 }
+  ]
+}

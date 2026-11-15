@@ -63,6 +63,12 @@ export function DecodeResultPanel({
         <h2 id="line-items-title" className="font-display text-2xl font-extrabold">
           Line by line
         </h2>
+        {result.area && (
+          <p className="mt-1 text-sm text-muted">
+            Typical prices for {result.area}: the average US vet price adjusted for local prices,
+            then 30% either side.
+          </p>
+        )}
         <ul className="mt-5">
           {result.lines.map((line, index) => (
             <DecodeLine key={`${line.raw_text}-${index}`} line={line} />

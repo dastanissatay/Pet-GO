@@ -1,0 +1,18 @@
+{
+  "source_label": "AVMA Pet Ownership and Demographics Sourcebook, 2025",
+  "source_url": "https://www.avma.org/news/evolving-pet-owner-economics-what-data-reveal-veterinary-teams",
+  "year": 2025,
+  "rows": [
+    {
+      "species": "dog",
+      "vet_care_average": 598
+    },
+    {
+      "species": "cat",
+      "vet_care_average": 529
+    }
+  ],
+  "compare_excludes_categories": [
+    "medication"
+  ]
+}

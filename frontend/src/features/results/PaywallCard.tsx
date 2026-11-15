@@ -7,7 +7,11 @@ import { Button } from "@/components/ui/button";
 import { PLANS } from "@/features/checkout/plans";
 import { cn } from "@/lib/utils";
 
-const PERKS = ["Unlimited estimate decoding", "Month-by-month forecast", "Every daily and weekly quest"];
+const PERKS = [
+  "Unlimited estimate decoding",
+  "Month-by-month forecast",
+  "Every daily, weekly and monthly quest",
+];
 
 interface PaywallCardProps {
   petName: string;

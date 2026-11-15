@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { formatDate, formatUsd, formatUsdRange, localDateIso, parseUsDate, toNumber } from "@/lib/format";
+import {
+  formatDate,
+  formatUsd,
+  formatUsdRange,
+  localDateIso,
+  parseUsDate,
+  toNumber,
+} from "@/lib/format";
 
 describe("formatUsd", () => {
   it("shows whole dollars without cents", () => {
