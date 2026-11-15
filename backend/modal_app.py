@@ -33,10 +33,12 @@ image = (
 
 secrets = [modal.Secret.from_name("petgo-api")]
 
-petgo = modal.App("petgo-api", image=image)
+# Named `app` so the plain `modal deploy modal_app.py` finds it. The Python package
+# imported inside api() is also called `app`; the import resolves the package, not this.
+app = modal.App("petgo-api", image=image)
 
 
-@petgo.function(
+@app.function(
     secrets=secrets,
     region=["eu"],  # the Render Postgres database is in Frankfurt
     min_containers=1,  # always warm: no cold start for visitors
@@ -52,7 +54,7 @@ def api():  # type: ignore[no-untyped-def]
     return create_app()
 
 
-@petgo.function(secrets=secrets, region=["eu"], timeout=300)
+@app.function(secrets=secrets, region=["eu"], timeout=300)
 def migrate() -> None:
     import subprocess
 
